@@ -1,2 +1,7 @@
-angular-dashboard
-=================
+# angular test
+
+## Install
+
+```shell
+bower install
+```
