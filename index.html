@@ -27,20 +27,16 @@
         <script src="scripts/lib/highcharts-release/highcharts.js"></script>
         <script src="scripts/lib/highcharts-release/modules/exporting.js"></script>
         <script src="scripts/lib/highcharts-release/highcharts-more.js"></script>
-        <script src="scripts/lib/angular.treeview.min.js"></script>
-        <script src="scripts/lib/socket-io.js"></script>
-        <script src="scripts/lib/custom.modernizr.js"></script>
+		<script src="scripts/lib/highcharts-ng/dist/highcharts-ng.min.js"></script>
         <script src="scripts/lib/flexmonster/flexmonster.js"></script>
 
         <script src="scripts/app.js"></script>
         <script src="scripts/directives.js"></script>
 
-        <script src="scripts/controllers/appController.js"></script>
+        <script src="scripts/controllers/homeController.js"></script>
 
     </head>
-    <body ng-app="myApp">
-        <div ng-controller="appController">
-			<div class="mainarea" ng-view></div>
-        </div>
+    <body ng-app="myApp">       
+		<div class="mainarea" ng-view></div>       
     </body>
 </html>
