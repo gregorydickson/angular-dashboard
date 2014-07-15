@@ -1,6 +1,6 @@
 'use strict';
 // Declare app level module which depends on filters, and services
-var myApp = angular.module('myApp', ['myApp.directives', 'ngRoute', 'uiSlider', 'ngGrid', 'ngRoute', 'ngResource', 'highcharts-ng']).
+var myApp = angular.module('myApp', ['myApp.directives', 'ngRoute','ui.tree', 'highcharts-ng']).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
         $routeProvider.
@@ -13,3 +13,19 @@ config(['$routeProvider', '$locationProvider',
         });
     }
 ]);
+
+myApp.service('Energy', function() {
+    //a service to get the data
+    // now just gets the object from data.js
+
+    return bigObject;
+})
+myApp.service('KwhMonth', function() {
+    //a service to get the data
+    // now just gets the object from data.js
+    var monthkwh = [];
+    var days = bigObject.days;
+    
+
+    return bigObject;
+})
