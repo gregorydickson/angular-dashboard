@@ -23,9 +23,12 @@ myApp.service('Energy', function() {
 myApp.service('KwhMonth', function() {
     //a service to get the data
     // now just gets the object from data.js
-    var monthkwh = [];
-    var days = bigObject.days;
-    
 
-    return bigObject;
+    return allkwh;
+})
+myApp.service('KwhHeatData', function() {
+    //a service to get the data
+    // now just gets the object from data.js
+
+    return kwhHeatData;
 })
