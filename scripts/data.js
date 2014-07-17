@@ -30,7 +30,7 @@ for (var i = 0; i <= 95; i++) {
 };
 
 $.each(days, function(index, day){
-	intervalDates.push(day.date);
+	intervalDates.push(Date.parse(day.date));
 	$.each(day.values, function (index,the96){
 		//console.log("interval " + index + " is " + the96);
 		

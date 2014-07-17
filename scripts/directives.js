@@ -94,38 +94,38 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
                     renderTo: 'container_heatmap',
                 },
                 yAxis: {
-                    type: 'category',
-                    categories: intervalDates
-                    
+                    type: 'datetime',
+                    min:intervalDates[0],
+                    max:intervalDates[95],
+                    tickInterval: 10,
+                    dateTimeLabelFormats: {
+                        day: '%e of %b'
+                    }
                 },
                 title: {
                     text: 'Heatmap 30 Days'
                 },
+                xAxis: {
+                    type: 'category',
+                    categories: intervals,
+                    tickInterval:20
+                },
                 colorAxis: {
                     
-                    //min: 200,
-                    //max: 450,
+                    min: 210,
+                    max: 700,
                     startOnTick: false,
                     endOnTick: false,
                     labels: {
-                        format: '{value} kw'
+                        format: '{value} KWH'
                     }
                 },
-                xAxis: {
-                    
-                    type: 'category',
-                    categories: intervals,
-                    
-                },
                 series: [{
-                    //borderWidth: 0,
-                    //nullColor: '#EFEFEF',
-                    rowsize: 500000000000,
-                    //colsize: 10 * 36e5,
-                    //colsize: 50 * 36e5,
+                    borderWidth: 0,
+                    rowsize: 100000000,
                     tooltip: {
                     headerFormat: 'KW<br/>',
-                       // pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} KWH</b>'
+                       pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} KWH</b>'
                     },
                     data: scope.kwhheatdata
                 }]
