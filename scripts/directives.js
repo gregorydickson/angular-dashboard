@@ -111,9 +111,8 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
                     tickInterval:20
                 },
                 colorAxis: {
-                    
-                    min: 210,
-                    max: 700,
+                    min: minValue,
+                    max: maxValue,
                     startOnTick: false,
                     endOnTick: false,
                     labels: {

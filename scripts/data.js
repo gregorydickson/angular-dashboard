@@ -17,6 +17,8 @@ var element = [];
 var kwhHeatData = [];
 var intervals = [];
 var intervalDates = [];
+var maxValue = 1.1;
+var minValue = 1000.1;
 
 for (var i = 0; i <= 95; i++) {
 	intervals.push(i);
@@ -31,23 +33,25 @@ for (var i = 0; i <= 95; i++) {
 
 $.each(days, function(index, day){
 	intervalDates.push(Date.parse(day.date));
+	
 	$.each(day.values, function (index,the96){
-		//console.log("interval " + index + " is " + the96);
 		
 		dateInMilliseconds = Date.parse(day.date);
-		
+		//calculates the datetime in milliseconds
+		//have to add the number based on the 96 time intervals per day
 		millisecondsToAdd = 900000 * (1+index);
 		totalMilliseconds = dateInMilliseconds + millisecondsToAdd;
 		
-		//console.log("updated date is " + totalMilliseconds);
-		element = [totalMilliseconds,
-					the96]
-		allkwh.push(element); 
+		element = [totalMilliseconds, the96];
+		allkwh.push(element);
+		if (the96 > maxValue) {maxValue = the96};
+		if ((the96 < minValue) && (the96 != 0)) {minValue = the96};
 		
 	});
 	
 });
 
 
-console.log("intervalDates is " + intervalDates);
+console.log("maxValue is " + maxValue);
+console.log("minValue is " + minValue);
 

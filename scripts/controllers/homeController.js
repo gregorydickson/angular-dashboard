@@ -25,26 +25,6 @@ myApp.controller('homeController', function($scope,  KwhMonth) {
         
         $scope.kwh = KwhMonth;
         $scope.kwhheatdata = kwhHeatData;
-
-
-		$scope.highchartsNG = {
-			
-			options: {
-				chart: {
-					type: 'areaspline' 
-				}
-			},
-			series: [{
-				data: [10, 15, 12, 8, 7],
-                visible: true
-			}],
-			title: {
-				text: 'Hello'
-			},
-			loading: false
-		}
-
-
         
 	}
 )
