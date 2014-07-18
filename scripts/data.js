@@ -3,9 +3,23 @@ var data = '{ "kwfactor": 4, "days": [ {"date": "2013-07-09", "values": [ 263.52
 var tree = '{"facilities":[{"id":1957,"meters":[{"id":2144,"desc":"Meter #1"},{"id":2145,"desc":"Meter #2"}],"name":"Arena"}]}';
 
 var bigObject = JSON.parse(data);
-console.log ("loaded data ");
+
+//array of days with 
 var days = bigObject.days;
-//console.log("days is "  );
+
+//Make an array with [interval, date, and kwh value]
+//for the heatmap
+var kwhHeatData = [];
+var element = [];
+var intervals = [];
+for (var i = 0; i <= 95; i++) {
+	intervals.push(i);
+	$.each(days, function(index, day){
+		
+		element = [i, Date.parse(days[index].date), days[index].values[i]];
+		kwhHeatData.push(element);
+	});
+};
 
 var allkwh = [];
 var milisecondsToAdd = 0;
@@ -13,23 +27,9 @@ var dateInMilliseconds;
 var date;
 var totalMilliseconds;
 var millisecondsToAdd;
-var element = [];
-var kwhHeatData = [];
-var intervals = [];
 var intervalDates = [];
 var maxValue = 1.1;
 var minValue = 1000.1;
-
-for (var i = 0; i <= 95; i++) {
-	intervals.push(i);
-	$.each(days, function(index, day){
-		
-		element = [i, Date.parse(days[index].date), days[index].values[i]];
-		//console.log("Element is " + element);
-		kwhHeatData.push(element);
-	
-	});
-};
 
 $.each(days, function(index, day){
 	intervalDates.push(Date.parse(day.date));
@@ -44,14 +44,22 @@ $.each(days, function(index, day){
 		
 		element = [totalMilliseconds, the96];
 		allkwh.push(element);
+		//while we are in the loop, get the max and min values
+		//for the y axis display
 		if (the96 > maxValue) {maxValue = the96};
 		if ((the96 < minValue) && (the96 != 0)) {minValue = the96};
-		
 	});
 	
 });
 
+var deciles = bigObject.deciles;
+//change deciles to percentage of the max min range
+var aDecile = 0.0;
+var maxMinusMin = maxValue - minValue;
 
-console.log("maxValue is " + maxValue);
-console.log("minValue is " + minValue);
+$.each(deciles, function(index, decile){
+	aDecile = (deciles[index] - minValue) / maxMinusMin;
+	deciles[index] = aDecile;
+});
+
 

@@ -20,28 +20,37 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
                 },
                 tooltip: {  
                 },
-                series: scope.columndata,
+                series: [{
+                    data: scope.columndata
+                }] 
+
             });
             scope.$watch("columndata", function(newValue) {
                 chart.series = newValue;
             }, true);
         }
     }
-}).directive('linechart', function() {
+}).directive('dailyprofile', function() {
     return {
         restrict: 'E',
         replace: true,
         scope: {
             linedata: '='
         },
-        template: '<div id="container_line" style="margin: 0 auto">not working</div>',
+        template: '<div id="container_dailyprofile" style="margin: 0 auto">not working</div>',
         link: function(scope, element, attrs) {
             var chart = new Highcharts.Chart({
                 chart: {
-                    type: 'line',
-                    renderTo: 'container_line',
+                    type: 'spline',
+                    renderTo: 'container_dailyprofile',
                 },
-                series: scope.linedata,
+                title: {
+                    text: 'Daily Profile'
+                },
+                series: [{
+                    data: scope.linedata
+                }]
+                
                
             });
             scope.$watch("linedata", function(newValue) {
@@ -70,7 +79,13 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
                     text: 'KWH 30 Days'
                 },
                 series: [{
-                    data: scope.kwhdata
+                    data: scope.kwhdata,
+                    events: {
+                        click: function (e) {
+
+                            alert("date value" +  e.point.x);
+                        }
+                    }
                 }]
                
             });
@@ -111,6 +126,18 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
                     tickInterval:20
                 },
                 colorAxis: {
+                    stops: [
+                        [deciles[0], '#00E54B'],
+                        [deciles[1], '#00E094'],
+                        [deciles[2], '#00DCDB'],
+                        [deciles[3], '#0091D8'],
+                        [deciles[4], '#0047D4'],
+                        [deciles[5], '#0000CF'],
+                        [deciles[6], '#4300CB'],
+                        [deciles[7], '#8400C7'],
+                        [deciles[8], '#C200C3'],
+                        [deciles[9], '#BF007F'],
+                    ],
                     min: minValue,
                     max: maxValue,
                     startOnTick: false,
