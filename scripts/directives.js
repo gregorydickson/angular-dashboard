@@ -30,7 +30,7 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
             }, true);
         }
     }
-}).directive('dailyprofile', function() {
+}).directive('dailyprofile', function($rootScope) {
     return {
         restrict: 'E',
         replace: true,
@@ -39,26 +39,39 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
         },
         template: '<div id="container_dailyprofile" style="margin: 0 auto">not working</div>',
         link: function(scope, element, attrs) {
-            var chart = new Highcharts.Chart({
+            $(element[0]).highcharts({
                 chart: {
-                    type: 'spline',
+                    type: 'area',
                     renderTo: 'container_dailyprofile',
                 },
+                 xAxis: {
+                    showEmpty: false
+                },
+                yAxis: {
+                    showEmpty: false
+                },
+
+
                 title: {
                     text: 'Daily Profile'
                 },
                 series: [{
+                    allowPointSelect: true,
                     data: scope.linedata
                 }]
                 
                
             });
             scope.$watch("linedata", function(newValue) {
-                chart.series = newValue;
+                
+                
+                
+                
             }, true);
+            
         }
     }
-}).directive('kwharea', function() {
+}).directive('kwharea', function($rootScope) {
     return {
         restrict: 'E',
         replace: true,
@@ -82,8 +95,26 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
                     data: scope.kwhdata,
                     events: {
                         click: function (e) {
+                            var aDate = new Date(e.point.x);
+                            var myDateString = aDate.getFullYear()+ '-' +
+                                ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
+                                ('0' + aDate.getDate()).slice(-2);
+                            console.log(myDateString);
+                            var newday = _.where(days, {date: myDateString});
+                            
+                            console.log("found day "+newday);
+                            Highcharts.charts[2].setTitle({text:newday[0].date},{},true);
+                            //Highcharts.charts[2].series = newday[0].values;
 
-                            alert("date value" +  e.point.x);
+                            console.log("set new title on daily profile");
+                            //dailyProfileChart.redraw();
+                            scope.linedata = newday;
+                            //scope.dailyProfileData = newday;
+                            scope.$apply(); 
+                            
+                            //have to set the series on the 
+                            //daily profile then have the chart redraw
+
                         }
                     }
                 }]
@@ -91,6 +122,8 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
             });
             scope.$watch("kwhdata", function(newValue) {
                 chart.series = newValue;
+                
+
             }, true);
         }
     }

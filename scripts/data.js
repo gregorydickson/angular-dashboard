@@ -6,6 +6,7 @@ var bigObject = JSON.parse(data);
 
 //array of days with 
 var days = bigObject.days;
+var dailyProfileChart;
 
 //Make an array with [interval, date, and kwh value]
 //for the heatmap

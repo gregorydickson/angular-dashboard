@@ -1,6 +1,6 @@
 'use strict';
 // Declare app level module which depends on filters, and services
-var myApp = angular.module('myApp', ['myApp.directives', 'ngRoute','ui.tree']).
+var myApp = angular.module('myApp', ['myApp.directives', 'ngRoute','highcharts-ng','ui.tree']).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
         $routeProvider.
