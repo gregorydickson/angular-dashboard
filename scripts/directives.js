@@ -1,36 +1,7 @@
 'use strict';
-/* Directives */
-angular.module('myApp.directives', []).directive('areaspline', function() {
-    return {
-        restrict: 'E',
-        replace: true,
-        scope: {
-            columndata: '=',
-        },
-        template: '<div id="container_areaspline" style="margin: 0 auto">not working</div>',
-        link: function(scope, element, attrs) {
-            var chart = new Highcharts.Chart({
-                chart: {
-                    type: 'areaspline',
-                    renderTo: 'container_areaspline',
-                },
-                title: {
-                },
-                subtitle: {  
-                },
-                tooltip: {  
-                },
-                series: [{
-                    data: scope.columndata
-                }] 
 
-            });
-            scope.$watch("columndata", function(newValue) {
-                chart.series = newValue;
-            }, true);
-        }
-    }
-}).directive('dailyprofile', function($rootScope) {
+/* Directives */
+angular.module('myApp.directives', []).directive('dailyprofile', function($rootScope) {
     return {
         restrict: 'E',
         replace: true,
@@ -82,7 +53,7 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
         link: function(scope, element, attrs) {
             var chart = new Highcharts.Chart({
                 chart: {
-                    type: 'area',
+                    type: 'spline',
                     renderTo: 'container_area',
                 },
                 xAxis: {
@@ -93,28 +64,25 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
                 },
                 series: [{
                     data: scope.kwhdata,
-                    events: {
-                        click: function (e) {
-                            var aDate = new Date(e.point.x);
-                            var myDateString = aDate.getFullYear()+ '-' +
-                                ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
-                                ('0' + aDate.getDate()).slice(-2);
-                            console.log(myDateString);
-                            var newday = _.where(days, {date: myDateString});
-                            
-                            console.log("found day "+newday);
-                            Highcharts.charts[2].setTitle({text:newday[0].date},{},true);
-                            //Highcharts.charts[2].series = newday[0].values;
+                    point: {
+                        events: {
+                            click: function(e) {
+                                var aDate = new Date(this.x);
+                                var myDateString = aDate.getFullYear()+ '-' +
+                                    ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
+                                    ('0' + aDate.getDate()).slice(-2);
+                                console.log(myDateString);
+                                if(Highcharts.charts[2].series[0] == null){
 
-                            console.log("set new title on daily profile");
-                            //dailyProfileChart.redraw();
-                            scope.linedata = newday;
-                            //scope.dailyProfileData = newday;
-                            scope.$apply(); 
-                            
-                            //have to set the series on the 
-                            //daily profile then have the chart redraw
-
+                                }else {
+                                    var newday = _.where(days, {date: myDateString});
+                                
+                                    console.log("found day "+newday);
+                                    Highcharts.charts[2].series[0].remove();
+                                    Highcharts.charts[2].setTitle({text:newday[0].date},{},false);
+                                    Highcharts.charts[2].addSeries({data: newday[0].values}, true);
+                                }
+                            }
                         }
                     }
                 }]
@@ -186,7 +154,30 @@ angular.module('myApp.directives', []).directive('areaspline', function() {
                     headerFormat: 'KW<br/>',
                        pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} KWH</b>'
                     },
-                    data: scope.kwhheatdata
+                    data: scope.kwhheatdata,
+                    point: {
+                        events: {
+                            click: function(e) {
+                                
+                                var aDate = new Date(this.y);
+                                var myDateString = aDate.getFullYear()+ '-' +
+                                    ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
+                                    ('0' + aDate.getDate()).slice(-2);
+                                console.log("date string from heatmap is " + myDateString);
+                                if(Highcharts.charts[3].series[0] == null){
+
+                                }else {
+                                    var newday = _.where(days, {date: myDateString});
+                                
+                                    console.log("found day "+newday);
+                                    Highcharts.charts[3].series[0].remove();
+                                    //Highcharts.charts[3].setTitle({text:newday[0].date},{},false);
+                                    Highcharts.charts[3].addSeries({data: newday[0].values}, true);
+
+                                }
+                            }
+                        }
+                    }
                 }]
                
             });
