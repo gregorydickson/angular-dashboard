@@ -1,7 +1,7 @@
 'use strict';
 
 /* Directives */
-angular.module('myApp.directives', []).directive('dailyprofile', function($rootScope) {
+angular.module('myApp.directives', []).directive('dailyprofile', function() {
     return {
         restrict: 'E',
         replace: true,
@@ -14,6 +14,8 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 chart: {
                     type: 'area',
                     renderTo: 'container_dailyprofile',
+                    height: 500,
+                    width: 600
                 },
                  xAxis: {
                     showEmpty: false
@@ -21,8 +23,6 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 yAxis: {
                     showEmpty: false
                 },
-
-
                 title: {
                     text: 'Daily Profile'
                 },
@@ -30,19 +30,11 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     allowPointSelect: true,
                     data: scope.linedata
                 }]
-                
                
-            });
-            scope.$watch("linedata", function(newValue) {
-                
-                
-                
-                
-            }, true);
-            
+            }); 
         }
     }
-}).directive('kwharea', function($rootScope) {
+}).directive('kwharea', function() {
     return {
         restrict: 'E',
         replace: true,
@@ -55,6 +47,8 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 chart: {
                     type: 'spline',
                     renderTo: 'container_area',
+                    height: 500,
+                    width: 600
                 },
                 xAxis: {
                     type: 'datetime'
@@ -63,36 +57,31 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     text: 'KWH 30 Days'
                 },
                 series: [{
+                    allowPointSelect: true,
                     data: scope.kwhdata,
                     point: {
                         events: {
                             click: function(e) {
-                                var aDate = new Date(this.x);
+                                var aDate = new Date(this.x+86400000);
                                 var myDateString = aDate.getFullYear()+ '-' +
                                     ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
                                     ('0' + aDate.getDate()).slice(-2);
-                                console.log(myDateString);
-                                if(Highcharts.charts[2].series[0] == null){
+ 
+                                var newday = _.where(days, {date: myDateString});
+                                Highcharts.charts[2].series[0].remove();
+                                Highcharts.charts[2].setTitle({text:"KwH "+newday[0].date},{},false);
+                                Highcharts.charts[2].addSeries({data: newday[0].values}, true);
 
-                                }else {
-                                    var newday = _.where(days, {date: myDateString});
-                                
-                                    console.log("found day "+newday);
-                                    Highcharts.charts[2].series[0].remove();
-                                    Highcharts.charts[2].setTitle({text:newday[0].date},{},false);
-                                    Highcharts.charts[2].addSeries({data: newday[0].values}, true);
-                                }
+                                newday = _.where(daysKw, {date: myDateString});
+                                Highcharts.charts[3].series[0].remove();
+                                Highcharts.charts[3].setTitle({text: "Kw " + newday[0].date},{},false);
+                                Highcharts.charts[3].addSeries({data: newday[0].values}, true);
+
                             }
                         }
                     }
-                }]
-               
+                }]      
             });
-            scope.$watch("kwhdata", function(newValue) {
-                chart.series = newValue;
-                
-
-            }, true);
         }
     }
 }).directive('kwhheatmap', function() {
@@ -108,6 +97,8 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 chart: {
                     type: 'heatmap',
                     renderTo: 'container_heatmap',
+                    height: 500,
+                    width: 600
                 },
                 yAxis: {
                     type: 'datetime',
@@ -119,7 +110,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     }
                 },
                 title: {
-                    text: 'Heatmap 30 Days'
+                    text: 'Kw 30 Days'
                 },
                 xAxis: {
                     type: 'category',
@@ -139,12 +130,12 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                         [deciles[8], '#C200C3'],
                         [deciles[9], '#BF007F'],
                     ],
-                    min: minValue,
-                    max: maxValue,
+                    min: minKwValue,
+                    max: maxKwValue,
                     startOnTick: false,
                     endOnTick: false,
                     labels: {
-                        format: '{value} KWH'
+                        format: '{value} KW'
                     }
                 },
                 series: [{
@@ -152,38 +143,67 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     rowsize: 100000000,
                     tooltip: {
                     headerFormat: 'KW<br/>',
-                       pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} KWH</b>'
+                       pointFormat: ' {point.y:%e %b, %Y}, Interval: {point.x} - <b>{point.value} KW</b>'
                     },
                     data: scope.kwhheatdata,
                     point: {
                         events: {
                             click: function(e) {
-                                
-                                var aDate = new Date(this.y);
+                                //var aDate = new Date(this.y);
+                                var aDate = new Date(this.y+86400000);
+                                console.log("timezone offset is " + aDate.getTimezoneOffset());
+                                console.log("heatmap y value is "+this.y);
                                 var myDateString = aDate.getFullYear()+ '-' +
                                     ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
                                     ('0' + aDate.getDate()).slice(-2);
-                                console.log("date string from heatmap is " + myDateString);
-                                if(Highcharts.charts[3].series[0] == null){
+                                console.log("heatmap date is " + aDate.toString()); 
+                                var newday = _.where(daysKw, {date: myDateString});
+                                Highcharts.charts[3].series[0].remove();
+                                Highcharts.charts[3].setTitle({text: "Kw " + newday[0].date},{},false);
+                                Highcharts.charts[3].addSeries({data: newday[0].values}, true);
+                                console.log("the date looked up by heatmap "+newday[0].date)
+                                newday = _.where(days, {date: myDateString});
+                                Highcharts.charts[2].series[0].remove();
+                                Highcharts.charts[2].setTitle({text:"KwH "+newday[0].date},{},false);
+                                Highcharts.charts[2].addSeries({data: newday[0].values}, true);
 
-                                }else {
-                                    var newday = _.where(days, {date: myDateString});
-                                
-                                    console.log("found day "+newday);
-                                    Highcharts.charts[3].series[0].remove();
-                                    //Highcharts.charts[3].setTitle({text:newday[0].date},{},false);
-                                    Highcharts.charts[3].addSeries({data: newday[0].values}, true);
-
-                                }
                             }
                         }
                     }
                 }]
-               
             });
-            scope.$watch("kwhheatdata", function(newValue) {
-                chart.series = newValue;
-            }, true);
+        }
+    }
+}).directive('kwbarchart', function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            bardata: '='
+        },
+        template: '<div id="container_kwhbarchart" style="margin: 0 auto">not working</div>',
+        link: function(scope, element, attrs) {
+            $(element[0]).highcharts({
+                chart: {
+                    type: 'column',
+                    renderTo: 'container_kwhbarchart',
+                    height: 500,
+                    width: 600
+                },
+                 xAxis: {
+                    showEmpty: false
+                },
+                yAxis: {
+                    showEmpty: false
+                },
+                title: {
+                    text: 'Daily Profile'
+                },
+                series: [{
+                    data: scope.bardata
+                }]
+               
+            }); 
         }
     }
 })

@@ -3,11 +3,17 @@ var data = '{ "kwfactor": 4, "days": [ {"date": "2013-07-09", "values": [ 263.52
 var tree = '{"facilities":[{"id":1957,"meters":[{"id":2144,"desc":"Meter #1"},{"id":2145,"desc":"Meter #2"}],"name":"Arena"}]}';
 
 var bigObject = JSON.parse(data);
+var treeObject = JSON.parse(tree);
+var treeArray = treeObject.facilities;
+
+console.log("treeObject " +treeObject);
+console.log("treeArray "+treeArray);
 
 //array of days with 
 var days = bigObject.days;
 var dailyProfileChart;
 
+// HEATMAP DATA
 //Make an array with [interval, date, and kwh value]
 //for the heatmap
 var kwhHeatData = [];
@@ -17,7 +23,7 @@ for (var i = 0; i <= 95; i++) {
 	intervals.push(i);
 	$.each(days, function(index, day){
 		
-		element = [i, Date.parse(days[index].date), days[index].values[i]];
+		element = [i, new Date(days[index].date).getTime(), (days[index].values[i]*bigObject.kwfactor)];
 		kwhHeatData.push(element);
 	});
 };
@@ -30,13 +36,19 @@ var totalMilliseconds;
 var millisecondsToAdd;
 var intervalDates = [];
 var maxValue = 1.1;
+var maxKwValue = 1.1;
+var minKwValue = 1000.1;
 var minValue = 1000.1;
+var theKwFactor = bigObject.kwfactor;
+
+var daysKw = [];
 
 $.each(days, function(index, day){
 	intervalDates.push(Date.parse(day.date));
-	
+	var valuesInKw = [];
 	$.each(day.values, function (index,the96){
-		
+		// multiply the values by kwfactor
+		valuesInKw.push(the96 * theKwFactor)
 		dateInMilliseconds = Date.parse(day.date);
 		//calculates the datetime in milliseconds
 		//have to add the number based on the 96 time intervals per day
@@ -48,10 +60,16 @@ $.each(days, function(index, day){
 		//while we are in the loop, get the max and min values
 		//for the y axis display
 		if (the96 > maxValue) {maxValue = the96};
+
 		if ((the96 < minValue) && (the96 != 0)) {minValue = the96};
 	});
+	var aDayInKw = {"date":day.date, "values":valuesInKw};
+	daysKw.push(aDayInKw);
 	
 });
+
+maxKwValue = maxValue * theKwFactor;
+minKwValue = minValue * theKwFactor;
 
 var deciles = bigObject.deciles;
 //change deciles to percentage of the max min range

@@ -1,44 +1,46 @@
 <div class='container-fluid'>
     <div class='row'>
-
-        <div class='col-md-2'>
+        <div class='col-lg-2'>
             <div ng-controller="treeCtrl">
-                <div ui-tree>
-                  <ol ui-tree-nodes ng-model="rows">
-                    <li ng-repeat="row in rows" ui-tree-node>
-                      <div ui-tree-handle>
-                        {{row.name}}
-                      </div>
-                
-                      <ol ui-tree-nodes ng-model="row.columns">
-                        <li ng-repeat="column in row.columns" ui-tree-node>
+                <form>
+                    <div ui-tree>
+                      <ol ui-tree-nodes ng-model="facilities">
+                        <li ng-repeat="row in facilities" ui-tree-node>
                           <div ui-tree-handle>
-                            {{column.name}}
+                            {{row.name}} <input type="checkbox" value="{{row.id}}" />
                           </div>
+                    
+                          <ol ui-tree-nodes ng-model="row.meters">
+                            <li ng-repeat="meter in row.meters" ui-tree-node>
+                              <div ui-tree-handle>
+                                {{meter.desc}} <input type="checkbox" value="{{meter.id}}" />
+                              </div>
+                            </li>
+                          </ol>
                         </li>
                       </ol>
-                    </li>
-                  </ol>
-                </div>
+                    </div>
+                    <input type="submit" value="update" ng-click=""/>
+                </form>
             </div>
         </div>
-        <div class='col-md-10'>
+        <div class='col-lg-10'>
             <div class='row'>
-                <div class='col-md-5'>
+                <div class='col-lg-5'>
                     <kwharea kwhdata="kwh"></kwharea>
                 </div>
-            	<div class='col-md-5'>
+            	<div class='col-lg-5'>
                     <kwhheatmap kwhheatdata="kwhheatdata"></kwhheatmap>
                 </div>
             </div>
             <div class='row'>
-            	<div class='col-md-5'> 
+            	<div class='col-lg-5'> 
                     <dailyprofile linedata="dailyProfileData"></dailyprofile>
                     
                 </div>
 
-                <div class='col-md-5'>
-                    <dailyprofile linedata="data2" ></dailyprofile>
+                <div class='col-lg-5'>
+                    <kwbarchart bardata="data2" ></kwbarchart>
                 </div>
             </div>
         </div>
