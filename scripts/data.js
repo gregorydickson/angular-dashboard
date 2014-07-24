@@ -6,9 +6,6 @@ var bigObject = JSON.parse(data);
 var treeObject = JSON.parse(tree);
 var treeArray = treeObject.facilities;
 
-console.log("treeObject " +treeObject);
-console.log("treeArray "+treeArray);
-
 //array of days with 
 var days = bigObject.days;
 var dailyProfileChart;

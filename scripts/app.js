@@ -1,6 +1,6 @@
 'use strict';
 // Declare app level module which depends on filters, and services
-var myApp = angular.module('myApp', ['myApp.directives', 'ngRoute','highcharts-ng','ui.tree']).
+var App = angular.module('myApp', ['myApp.directives', 'ngRoute','highcharts-ng','ui.tree']).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
         $routeProvider.
@@ -13,20 +13,46 @@ config(['$routeProvider', '$locationProvider',
         });
     }
 ]);
+ 
+  
+App.factory('IntervalsService', function ($http) {
+  return function () {
 
-myApp.service('Energy', function() {
+    return $http.get('data.js');
+  };
+})
+
+App.factory('KwhMonth', function(IntervalsService) {
     //a service to get the data
     // now just gets the object from data.js
-
-    return bigObject;
+    
+    return function () {
+    $log.log('taskA start')
+    var kwhMonth;
+    var kwhHeatData;
+    var days = [];
+    var dayskw;
+    var minKwValue;
+    var maxKwValue;
+    var deciles = [];
+    var intervalDates = [];
+    return common()
+      .then(function () {
+        // Do something
+        return 'taskA done';
+      });
+  };
+    return allkwh;
 })
-myApp.service('KwhMonth', function() {
+
+
+App.service('KwhMonth', function() {
     //a service to get the data
     // now just gets the object from data.js
 
     return allkwh;
 })
-myApp.service('KwhHeatData', function() {
+App.service('KwhHeatData', function() {
     //a service to get the data
     // now just gets the object from data.js
 

@@ -1,5 +1,5 @@
 'use strict';
-myApp.controller('homeController', function($scope,  KwhMonth) {
+App.controller('homeController', function($scope,  KwhMonth) {
     
         //scope for kwh 30 days, first chart
         $scope.kwh = KwhMonth;
@@ -15,7 +15,7 @@ myApp.controller('homeController', function($scope,  KwhMonth) {
 
         
 });
-myApp.controller('treeCtrl', function($scope) {
+App.controller('treeCtrl', function($scope) {
     //$scope.facilities = treeArray;
     $scope.facilities = treeArray;
 });
