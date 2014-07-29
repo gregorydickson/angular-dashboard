@@ -24,8 +24,6 @@
         <script src="http://code.highcharts.com/highcharts-more.js"></script>
         <script src="http://code.highcharts.com/modules/heatmap.js"></script>
 
-
-        <script src="scripts/data.js"></script>
         <script src="scripts/app.js"></script>
         <script src="scripts/directives.js"></script>
         <script src="scripts/controllers.js"></script>
