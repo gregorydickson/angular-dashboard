@@ -11,6 +11,7 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
             $rootScope.maxKwValue = Energy.maxKwValue;
             $rootScope.intervals = Energy.intervals;
             $rootScope.intervalDates = Energy.intervalDates;
+            $rootScope.intervalTimes = Energy.intervalTimes;
             $scope.kwhheatdata = Energy.kwhHeatData;
 
             //scope for daily profile, third chart

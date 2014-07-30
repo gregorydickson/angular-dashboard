@@ -29,6 +29,7 @@
         <script src="scripts/controllers.js"></script>
 
     </head>
+  
     <body ng-app="myApp">       
 		<div class="mainarea" ng-view></div>       
     </body>

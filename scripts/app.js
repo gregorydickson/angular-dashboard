@@ -46,16 +46,28 @@ App.factory('EnergyAsyncService', function(IntervalsDataService) {
             Energy.intervalDates = [];
             Energy.allkwh = [];
             Energy.kwFactor = energy.data.kwfactor;
+            Energy.intervals = [];
+            Energy.intervalTimes = [];
             //calculate the heatmap data
             var element = [];
-            Energy.intervals = [];
+            var time = 21600000; //create a javascript millisecond time that will be midnight
+            var kwhValue = 0;
             for (var i = 0; i <= 95; i++) {
                 Energy.intervals.push(i);
+                var timeOfDay = new Date(time);
+                var minutes = timeOfDay.getMinutes().toString();
+                if (minutes.length < 2) {minutes = minutes + "0"};
+                Energy.intervalTimes.push(timeOfDay.getHours() + ":" + minutes);
+                
                 $.each(Energy.days, function(index, day){
+                    if(Energy.days[index].values[i] !== undefined ) {
+                        kwhValue = (Energy.days[index].values[i] * Energy.kwFactor);
+                    }
                     
-                    element = [i, new Date(Energy.days[index].date).getTime(), (Energy.days[index].values[i]*Energy.kwFactor)];
+                    element = [i, new Date(Energy.days[index].date).getTime(), kwhValue ];
                     Energy.kwhHeatData.push(element);
                 });
+                time = time + 900000; //add 15 minutes to time in milliseconds
             };
             //calculate the days in kw
             var dateInMilliseconds;

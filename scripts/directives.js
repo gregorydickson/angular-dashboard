@@ -13,7 +13,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                 chart: {
                     type: 'area',
                     renderTo: 'container_dailyprofile',
-                    height: 500,
+                    height: 400,
                     width: 600
                 },
                  xAxis: {
@@ -55,7 +55,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                     type: 'datetime'
                 },
                 title: {
-                    text: 'KWH 30 Days'
+                    text: 'Load Profile 30 Days'
                 },
                 series: [{
                     allowPointSelect: true,
@@ -104,7 +104,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                     width: 600
                 },
                 title: {
-                        text: 'Placeholder'
+                        text: 'Demand'
                     }
             });
             scope.$watch('kwhheatdata', function(newValue, oldValue) {
@@ -126,12 +126,12 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                         }
                     },
                     title: {
-                        text: 'Kw 30 Days'
+                        text: 'Demand 30 Days'
                     },
                     xAxis: {
-                        type: 'category',
-                        categories: $rootScope.intervals,
-                        tickInterval:20
+                        type: 'categories',
+                        categories: $rootScope.intervalTimes,
+                        tickInterval: 10
                     },
                     colorAxis: {
                         stops: [
@@ -149,9 +149,9 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                             */
                             
                             [$rootScope.deciles[0], '#0021BF'],
-                            [$rootScope.deciles[2], '#00DCDB'],
-                            [$rootScope.deciles[3], '#BFD9F2'],
-                            [$rootScope.deciles[4], '#ABD2F7'],
+                            [$rootScope.deciles[3], '#00DCDB'],
+                            [$rootScope.deciles[4], '#BFD9F2'],
+                            [$rootScope.deciles[5], '#ABD2F7'],
                             [$rootScope.deciles[8], '#F9B4DF'],
                             [$rootScope.deciles[9], '#E50035'],
                             
@@ -169,9 +169,10 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                         borderWidth: 0,
                         rowsize: 100000000,
                         tooltip: {
-                        headerFormat: 'KW<br/>',
-                           pointFormat: ' {point.y:%e %b, %Y}, Interval: {point.x} - <b>{point.value} KW</b>'
+                            headerFormat: 'KW<br/>',
+                            pointFormat: ' {point.y:%a %b %e, %Y}, Interval: {point.x} - <b>{point.value} KW</b>'
                         },
+                        
                         data: newValue,
                         point: {
                             events: {
@@ -212,7 +213,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                 chart: {
                     type: 'column',
                     renderTo: 'container_kwhbarchart',
-                    height: 500,
+                    height: 400,
                     width: 600
                 },
                  xAxis: {
