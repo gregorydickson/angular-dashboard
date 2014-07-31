@@ -15,11 +15,18 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
             $scope.kwhheatdata = Energy.kwhHeatData;
 
             //scope for daily profile, third chart
-            $scope.dailyProfileData = Energy.days[0].values;
+            var kwhDay = {};
+            kwhDay.values = Energy.days[0].values;
+            kwhDay.date = Energy.daysKw[0].date;
+            kwhDay.intervalTimes = Energy.intervalTimes;
+            $scope.dailyProfileData = kwhDay;
             //need the data in a window variable for the click event
             days = Energy.days;
             //fourth chart
-            $scope.data2 = Energy.daysKw[0].values;
+            var kwDay = {};
+            kwDay.values = Energy.daysKw[0].values;
+            kwDay.date = Energy.daysKw[0].date;
+            $scope.data2 = kwDay;
             //data in a window variable for the click event
             daysKw = Energy.daysKw;
         });

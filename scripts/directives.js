@@ -1,6 +1,6 @@
 'use strict';
 /* Directives */
-angular.module('myApp.directives', []).directive('dailyprofile', function() {
+angular.module('myApp.directives', []).directive('dailyprofile', function($rootScope) {
     return {
         restrict: 'E',
         replace: true,
@@ -11,13 +11,12 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
         link: function(scope, element, attrs) {
             var chart = new Highcharts.Chart({
                 chart: {
-                    type: 'area',
+                    type: 'line',
                     renderTo: 'container_dailyprofile',
-                    //height: 400,
-                    //width: 600
                 },
                  xAxis: {
-                    showEmpty: false
+                    type: 'categories',
+                    tickInterval: 10
                 },
                 yAxis: {
                     showEmpty: false
@@ -27,11 +26,26 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                 },
                 series: [{
                     allowPointSelect: true,
-                    data: scope.linedata
                 }]
             });
             scope.$watch('linedata', function(newValue) {
-                chart.series[0].setData(newValue,true);
+                if (newValue !== undefined) {
+                    var aDate = new Date(newValue.date);
+                    var aColor;
+                    var day = aDate.getUTCDay();
+                    if(day == 0 || day == 1) {
+                        aColor = '#99FF33'; 
+                    } else if(day == 2) { 
+                        aColor = '#FF9900'; 
+                    } 
+                    else {
+                        aColor = '#CC0000';
+                    }
+                    chart.series[0].setData(newValue.values,false);
+                    chart.series[0].color = aColor;
+                    chart.xAxis[0].setCategories($rootScope.intervalTimes,false);
+                    chart.redraw();
+                }
             }, true);
         }
     }
@@ -48,53 +62,55 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                 chart: {
                     type: 'spline',
                     renderTo: 'container_area',
-                    //height: 500,
-                    //width: 600
-                },
-                xAxis: {
-                    type: 'datetime'
-                },
-                title: {
-                    text: 'Load Profile 30 Days'
-                },
-                series: [{
-                    allowPointSelect: true,
-                    data: scope.kwhdata,
-                    point: {
-                        events: {
-                            click: function(e) {
-                                var aDate = new Date(this.x+86400000);
-                                var aColor;
-                                var day = aDate.getUTCDay();
-                                if(day == 0 || day == 1) {
-                                    aColor = '#99FF33'; 
-                                } else if(day == 2) { 
-                                    aColor = '#FF9900'; 
-                                } 
-                                else {
-                                    aColor = '#CC0000';
-                                }
-                                var myDateString = aDate.getFullYear()+ '-' +
-                                    ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
-                                    ('0' + aDate.getDate()).slice(-2);
- 
-                                var newday = _.where(days, {date: myDateString});
-                                Highcharts.charts[2].series[0].remove();
-                                Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
-                                Highcharts.charts[2].addSeries({data: newday[0].values, color: aColor}, true);
-
-                                newday = _.where(daysKw, {date: myDateString});
-                                Highcharts.charts[3].series[0].remove();
-                                Highcharts.charts[3].setTitle({text: "Demand Profile " + newday[0].date},{},false);
-                                Highcharts.charts[3].addSeries({data: newday[0].values,color: aColor}, true);
-
-                            }
-                        }
-                    }
-                }]      
+                }
             });
             scope.$watch('kwhdata', function(newValue) {
-                chart.series[0].setData(newValue,true);
+                chart = new Highcharts.Chart({
+                    chart: {
+                        type: 'spline',
+                        renderTo: 'container_area',
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                    },
+                    title: {
+                        text: 'Load Profile 30 Days'
+                    },
+                    series: [{
+                        allowPointSelect: true,
+                        data: newValue,
+                        point: {
+                            events: {
+                                click: function(e) {
+                                    var aDate = new Date(this.x+86400000);
+                                    var aColor;
+                                    var day = aDate.getUTCDay();
+                                    if(day == 0 || day == 1) {
+                                        aColor = '#99FF33'; 
+                                    } else if(day == 2) { 
+                                        aColor = '#FF9900'; 
+                                    } 
+                                    else {
+                                        aColor = '#CC0000';
+                                    }
+                                    var myDateString = aDate.getFullYear()+ '-' +
+                                        ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
+                                        ('0' + aDate.getDate()).slice(-2);
+     
+                                    var newday = _.where(days, {date: myDateString});
+                                    Highcharts.charts[2].series[0].remove();
+                                    Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
+                                    Highcharts.charts[2].addSeries({data: newday[0].values, color: aColor}, true);
+
+                                    newday = _.where(daysKw, {date: myDateString});
+                                    Highcharts.charts[3].series[0].remove();
+                                    Highcharts.charts[3].setTitle({text: "Demand Profile " + newday[0].date},{},false);
+                                    Highcharts.charts[3].addSeries({data: newday[0].values,color: aColor}, true);
+                                }
+                            }
+                        }
+                    }]      
+                });
             }, true);
         }
     }
@@ -110,7 +126,6 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
             var chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'container_heatmap',
-
                 },
                 title: {
                         text: 'Demand'
@@ -122,8 +137,6 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                     chart: {
                         type: 'heatmap',
                         renderTo: 'container_heatmap',
-                        //height: 500,
-                        //width: 600
                     },
                     yAxis: {
                         type: 'datetime',
@@ -181,7 +194,6 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                             headerFormat: 'KW<br/>',
                             pointFormat: ' {point.y:%a %b %e, %Y}, Interval: {point.x} - <b>{point.value} KW</b>'
                         },
-                        
                         data: newValue,
                         point: {
                             events: {
@@ -208,18 +220,16 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                                     Highcharts.charts[2].series[0].remove();
                                     Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
                                     Highcharts.charts[2].addSeries({data: newday[0].values,color: aColor}, true);
-
                                 }
                             }
                         }
                     }]
                     });
                 }
-
             }, true);
         }
     }
-}).directive('kwbarchart', function() {
+}).directive('kwbarchart', function($rootScope) {
     return {
         restrict: 'E',
         replace: true,
@@ -228,15 +238,17 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
         },
         template: '<div id="container_kwhbarchart">not working</div>',
         link: function(scope, element, attrs) {
+            
             var chart = new Highcharts.Chart({
                 chart: {
                     type: 'column',
                     renderTo: 'container_kwhbarchart',
-                    //height: 400,
-                    //width: 600
+
                 },
-                 xAxis: {
-                    showEmpty: false
+                xAxis: {
+                    type: 'categories',
+                    categories: $rootScope.intervalTimes,
+                    tickInterval: 10
                 },
                 yAxis: {
                     showEmpty: false
@@ -245,12 +257,29 @@ angular.module('myApp.directives', []).directive('dailyprofile', function() {
                     text: 'Demand Profile'
                 },
                 series: [{
-                    data: scope.bardata
+                  
                 }]
                
             }); 
             scope.$watch('bardata', function(newValue) {
-                chart.series[0].setData(newValue,true);
+                if (newValue !== undefined) {
+                    var aDate = new Date(newValue.date);
+                    var aColor;
+                    var day = aDate.getUTCDay();
+                    if(day == 0 || day == 1) {
+                        aColor = '#99FF33'; 
+                    } else if(day == 2) { 
+                        aColor = '#FF9900'; 
+                    } 
+                    else {
+                        aColor = '#CC0000';
+                    }
+                    chart.series[0].setData(newValue.values,false);
+                    chart.series[0].color = aColor;
+
+                    chart.xAxis[0].setCategories($rootScope.intervalTimes,false);
+                    chart.redraw();
+                }
             }, true);
         }
     }

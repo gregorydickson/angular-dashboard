@@ -16,15 +16,25 @@ config(['$routeProvider', '$locationProvider',
         });
     }
 ]);
-
+App.factory('ViewsService', function ($http) {
+  return function () {
+    return $http.post('views.php');
+  };
+})
 App.factory('FacilitiesService', function ($http) {
   return function () {
     return $http.post('facilities.php');
   };
 })
-App.factory('IntervalsDataService', function ($http) {
+App.factory('IntervalsDataService', function ($http,FacilitiesService) {
   return function () {
-    return $http.post('data.php');
+    return FacilitiesService()
+        .then(function(facilities){
+            console.log("facilites returned in interval data service" + facilities.data);
+            //get the 
+            return $http.post('data.php');
+        });
+        
   };
 })
 
