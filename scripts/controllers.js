@@ -22,12 +22,10 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
             $scope.data2 = Energy.daysKw[0].values;
             //data in a window variable for the click event
             daysKw = Energy.daysKw;
-
         });
         
 });
 App.controller('treeCtrl', function($scope,FacilitiesService) {
-    
     
     FacilitiesService().then(function(facilities){
         $scope.facilities = facilities.data.facilities;

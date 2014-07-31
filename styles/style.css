@@ -1,14 +1,18 @@
 body {
 	background-color: #EEF1F2;
 }
-.col-md-* {
-
-	margin: 3%;
-	padding: 3%;
-
-	background-color: white;
+.container {
+    
+    padding-left: 30px;
+    padding-right: 30px;
 }
-
+.col-lg-6 {
+	margin: 0%;
+	padding: 0%;
+}
+.row {
+    background-color:yellow;
+}
 .btn {
     margin-right: 8px;
 }
@@ -32,10 +36,4 @@ body {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-}
-
-
-.group-title {
-    background-color: #687074 !important;
-    color: #FFF !important;
 }
