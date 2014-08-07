@@ -4,23 +4,37 @@
             <div ng-controller="treeCtrl">
                 <form>
                     <div ui-tree>
+                    <h4>Meters</h4>
                       <ol ui-tree-nodes ng-model="facilities">
-                        <li ng-repeat="row in facilities" ui-tree-node>
+                        <li ng-repeat="facility in facilities" ui-tree-node>
                           <div ui-tree-handle>
-                            {{row.name}} <input type="checkbox" value="{{row.id}}" />
+                            {{facility.name}} <input type="checkbox" value="{{facility.id}}" ng-model="facility.selected" />
                           </div>
                     
-                          <ol ui-tree-nodes ng-model="row.meters">
-                            <li ng-repeat="meter in row.meters" ui-tree-node>
+                          <ol ui-tree-nodes ng-model="facility.meters">
+                            <li ng-repeat="meter in facility.meters" ui-tree-node>
                               <div ui-tree-handle>
-                                {{meter.desc}} <input type="checkbox" value="{{meter.id}}" />
+                                {{meter.desc}} <input type="checkbox" value="{{meter.id}}" ng-model="meter.selected" />
                               </div>
                             </li>
                           </ol>
                         </li>
                       </ol>
+                      <h4>Views</h4>
+                      <ol ui-tree-nodes ng-model="views">
+                        <li ng-repeat="view in views" ui-tree-node>
+                          <div ui-tree-handle>
+                            {{view.name}} <input type="checkbox" value="{{row.id}}" />
+                          </div>
+                    
+                          
+                        </li>
+                      </ol>
                     </div>
-                    <input type="submit" value="update" ng-click=""/>
+                    <input type="text" class="view-input" />
+                    <input type="submit" value="Update View" ng-click=""/><br />
+                    <input type="submit" value="Delete View" ng-click=""/><br />
+                    <input type="submit" value="Create View" ng-click=""/>
                 </form>
             </div>
         </div>

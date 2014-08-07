@@ -1,6 +1,7 @@
 'use strict';
 /* Directives */
 angular.module('myApp.directives', []).directive('dailyprofile', function($rootScope) {
+    //Chart 3, bottom left 
     return {
         restrict: 'E',
         replace: true,
@@ -50,6 +51,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
         }
     }
 }).directive('kwharea', function() {
+    // First Chart, upper left
     return {
         restrict: 'E',
         replace: true,
@@ -73,12 +75,51 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     xAxis: {
                         type: 'datetime',
                     },
+                    yAxis: [{
+                        title: {
+                            text: 'KWH',
+                            style: {
+                                color: Highcharts.getOptions().colors[0]
+                            }
+                        },
+                        labels: {
+                            format: '{value} KWH',
+                            style: {
+                                color: Highcharts.getOptions().colors[0]
+                            }
+                        },
+                    },
+                    { // Secondary yAxis
+                        title: {
+                            text: 'Temperature',
+                            style: {
+                                color: Highcharts.getOptions().colors[2]
+                            }
+                        },
+                        labels: {
+                            format: '{value} F',
+                            style: {
+                                color: Highcharts.getOptions().colors[2]
+                            }
+                        },
+                        opposite: true,
+                    }],
                     title: {
                         text: 'Load Profile 30 Days'
                     },
                     series: [{
+                        name: "Temperature",
+                        data: newValue.alltemps,
+                        lineWidth: 1,
+                        yAxis: 1,
+                        color: Highcharts.getOptions().colors[2]
+                        
+                    },
+                    {
+                        name: "KWH",
+                        color: Highcharts.getOptions().colors[1],
                         allowPointSelect: true,
-                        data: newValue,
+                        data: newValue.allkwh,// newValue.alltemps
                         point: {
                             events: {
                                 click: function(e) {
@@ -109,6 +150,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                 }
                             }
                         }
+
                     }]      
                 });
             }, true);

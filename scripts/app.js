@@ -16,28 +16,46 @@ config(['$routeProvider', '$locationProvider',
         });
     }
 ]);
-App.factory('ViewsService', function ($http) {
-  return function () {
-    return $http.post('views.php');
+App.factory('ConfigService', function ($http) {
+  var configServiceFactory = {};
+  configServiceFactory.getConfig = function () {
+    console.log("SID is " + SID);
+    return $http({
+        url: 'config.php',
+        method: "POST",
+        data: JSON.stringify({function:"masterconfig", SID:SID,application:"LPDashboard"}),
+        headers: {'Content-Type': 'application/json'},
+        cache: true
+    });
   };
-})
-App.factory('FacilitiesService', function ($http) {
-  return function () {
-    return $http.post('facilities.php');
+  configServiceFactory.saveConfig = function (view) {
+    $httpDefaultCache.remove('config.php');
   };
+  return configServiceFactory;
 })
-App.factory('IntervalsDataService', function ($http,FacilitiesService) {
+App.factory('IntervalsDataService', function ($http,ConfigService) {
   return function () {
-    return FacilitiesService()
-        .then(function(facilities){
-            console.log("facilites returned in interval data service" + facilities.data);
-            //get the 
-            return $http.post('data.php');
+    return ConfigService.getConfig()
+        .then(function(config){
+            console.log("facilites returned in interval data service" + config.data);
+            
+            return $http({
+                url:'data.php',
+                method: "POST",
+                data: JSON.stringify({
+                    function:"intervals",
+                    meters:"111,222",
+                    enddate:"2014-07-07",
+                    timeperiod:"last30days",
+                    binsize:"15",
+                    SID:SID,
+                    application:"LPDashboard"
+                }),
+                headers: {'Content-Type': 'application/json'}
+            });
         });
-        
   };
 })
-
 App.factory('EnergyAsyncService', function(IntervalsDataService) {
     return function () {
         return IntervalsDataService()
@@ -54,13 +72,16 @@ App.factory('EnergyAsyncService', function(IntervalsDataService) {
             Energy.deciles = energy.data.deciles;
             Energy.percentDeciles = [];
             Energy.intervalDates = [];
-            Energy.allkwh = [];
+            Energy.allkwh = [];  //for display in the Load Profile 30 days
+            Energy.alltemps = []; //to display temps in the 
             Energy.kwFactor = energy.data.kwfactor;
             Energy.intervals = [];
             Energy.intervalTimes = [];
-            //calculate the heatmap data
+            //calculate the heatmap data in a three dimentional array
             var element = [];
-            var time = 21600000; //create a javascript millisecond time that will be midnight
+            //create a javascript millisecond time that will be midnight UTC
+            //so that we can create a set of 15 minute intervals from midnight
+            var time = 21600000; 
             var kwhValue = 0;
             for (var i = 0; i <= 95; i++) {
                 Energy.intervals.push(i);
@@ -73,7 +94,6 @@ App.factory('EnergyAsyncService', function(IntervalsDataService) {
                     if(Energy.days[index].values[i] !== undefined ) {
                         kwhValue = (Energy.days[index].values[i] * Energy.kwFactor);
                     }
-                    
                     element = [i, new Date(Energy.days[index].date).getTime(), kwhValue ];
                     Energy.kwhHeatData.push(element);
                 });
@@ -104,6 +124,18 @@ App.factory('EnergyAsyncService', function(IntervalsDataService) {
 
                     if ((the96 < Energy.minValue) && (the96 != 0)) {Energy.minValue = the96};
                 });
+                if(day.temps !== undefined){
+                    $.each(day.temps,function (index,tempInterval){
+                        dateInMilliseconds = Date.parse(day.date);
+                        //calculates the datetime in milliseconds
+                        //have to add the number based on the 96 time intervals per day
+                        millisecondsToAdd = 900000 * (1+index);
+                        totalMilliseconds = dateInMilliseconds + millisecondsToAdd;
+                        
+                        element = [totalMilliseconds, tempInterval];
+                        Energy.alltemps.push(element);
+                    });
+                }
                 var aDayInKw = {"date":day.date, "values":valuesInKw};
                 Energy.daysKw.push(aDayInKw);
             });

@@ -27,6 +27,11 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/directives.js"></script>
         <script src="scripts/controllers.js"></script>
+        <script>
+        <?php 
+            echo "var SID = '100001';";
+        ?> 
+        </script>
 
     </head>
   

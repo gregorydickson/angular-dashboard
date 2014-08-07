@@ -4,7 +4,8 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
         EnergyAsyncService().then(function (Energy) {
 
             //scope for kwh 30 days, first chart
-            $scope.kwh = Energy.allkwh;
+            $scope.kwh = Energy;
+            
              //scope for heatmap, second chart
             $rootScope.deciles = Energy.percentDeciles;
             $rootScope.minKwValue = Energy.minKwValue;
@@ -32,11 +33,49 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
         });
         
 });
-App.controller('treeCtrl', function($scope,FacilitiesService) {
-    
-    FacilitiesService().then(function(facilities){
-        $scope.facilities = facilities.data.facilities;
+App.controller('treeCtrl', function($scope,ConfigService,filterFilter) {
+    $scope.metersSelected = [];
+    ConfigService.getConfig().then(function(config){
+        var facilities = config.data.facilities;
+        var lpPage = _.find(config.data.pages, {'name': 'LP'});
+        $scope.views = lpPage.views;
+        //get the default view and find the meters that should be selected
+        _.forEach($scope.views, function(view){
+            console.log("view name " + view.name);
+            if(view.default === true) {
+                _.forEach(view.meters,function(meter){
+                    $scope.metersSelected.push(meter);
+                });
+            }
+
+        });
+        //create a selected attribute on all meters and set it true
+        // if they are in the selected meters list
+        _.forEach(facilities, function(facility){
+            _.forEach(facility.meters, function(meter){
+                meter.selected = false;
+                if(_.contains($scope.metersSelected,meter.id )){
+                    meter.selected = true;
+                }
+            });
+        });
+        
+        $scope.facilities = facilities;
     });
     
+    $scope.facilitiesSelected = [];
+    
+    
+    //watch for changes
+    $scope.$watch('facilities', function (newvalue, oldvalue) {
+      if(newvalue){
+        console.log("watch function facilities");
+      }
+      
+    }, true);
+    
+    
 });
+
+
 
