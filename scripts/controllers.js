@@ -20,6 +20,7 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
             kwhDay.values = Energy.days[0].values;
             kwhDay.date = Energy.daysKw[0].date;
             kwhDay.intervalTimes = Energy.intervalTimes;
+            kwhDay.temps = Energy.days[0].temps;
             $scope.dailyProfileData = kwhDay;
             //need the data in a window variable for the click event
             days = Energy.days;
@@ -27,6 +28,7 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
             var kwDay = {};
             kwDay.values = Energy.daysKw[0].values;
             kwDay.date = Energy.daysKw[0].date;
+            kwDay.temps = Energy.days[0].temps;
             $scope.data2 = kwDay;
             //data in a window variable for the click event
             daysKw = Energy.daysKw;

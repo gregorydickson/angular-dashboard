@@ -39,12 +39,14 @@ App.factory('IntervalsDataService', function ($http,ConfigService) {
         .then(function(config){
             console.log("facilites returned in interval data service" + config.data);
             
+            var LPPage = _.find(config.data.pages,{'name':'LP'} );
+            var defaultView = _.find(LPPage.views, {'default':true});
             return $http({
                 url:'data.php',
                 method: "POST",
                 data: JSON.stringify({
                     function:"intervals",
-                    meters:"111,222",
+                    meters:defaultView.meters,
                     enddate:"2014-07-07",
                     timeperiod:"last30days",
                     binsize:"15",
@@ -154,6 +156,7 @@ App.factory('EnergyAsyncService', function(IntervalsDataService) {
           });
     };
 })
+
 
 
 

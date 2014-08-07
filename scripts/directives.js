@@ -15,18 +15,50 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     type: 'line',
                     renderTo: 'container_dailyprofile',
                 },
-                 xAxis: {
-                    type: 'categories',
-                    tickInterval: 10
+                yAxis:[{ //First Y Axis
+                    title: {
+                        text: 'KWH',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
+                    labels: {
+                        format: '{value} KWH',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
                 },
-                yAxis: {
-                    showEmpty: false
+                { // Secondary yAxis
+                    title: {
+                        text: 'Temperature',
+                        style: {
+                            color: Highcharts.getOptions().colors[2]
+                        }
+                    },
+                    labels: {
+                        format: '{value} F',
+                        style: {
+                            color: Highcharts.getOptions().colors[2]
+                        }
+                    },
+                    opposite: true,
+                }],
+                xAxis: {
+                    tickInterval: 10
                 },
                 title: {
                     text: 'Load Profile'
                 },
                 series: [{
+                    name: 'KWH',
                     allowPointSelect: true,
+                },
+                {
+                    name: 'Temperature',
+                    allowPointSelect: true,
+                    yAxis: 1,
+
                 }]
             });
             scope.$watch('linedata', function(newValue) {
@@ -42,9 +74,13 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     else {
                         aColor = '#CC0000';
                     }
+                    
                     chart.series[0].setData(newValue.values,false);
                     chart.series[0].color = aColor;
                     chart.xAxis[0].setCategories($rootScope.intervalTimes,false);
+                    if(newValue.temps !== undefined){
+                        chart.series[1].setData(newValue.temps,false);
+                    }
                     chart.redraw();
                 }
             }, true);
@@ -67,96 +103,105 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 }
             });
             scope.$watch('kwhdata', function(newValue) {
-                chart = new Highcharts.Chart({
-                    chart: {
-                        type: 'spline',
-                        renderTo: 'container_area',
-                    },
-                    xAxis: {
-                        type: 'datetime',
-                    },
-                    yAxis: [{
+                if(newValue !== undefined){
+                    chart = new Highcharts.Chart({
+                        chart: {
+                            type: 'spline',
+                            renderTo: 'container_area',
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                        },
+                        yAxis: [{
+                            title: {
+                                text: 'KWH',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            },
+                            labels: {
+                                format: '{value} KWH',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            },
+                        },
+                        { // Secondary yAxis
+                            title: {
+                                text: 'Temperature',
+                                style: {
+                                    color: Highcharts.getOptions().colors[2]
+                                }
+                            },
+                            labels: {
+                                format: '{value} F',
+                                style: {
+                                    color: Highcharts.getOptions().colors[2]
+                                }
+                            },
+                            opposite: true,
+                        }],
                         title: {
-                            text: 'KWH',
-                            style: {
-                                color: Highcharts.getOptions().colors[0]
-                            }
+                            text: 'Load Profile 30 Days'
                         },
-                        labels: {
-                            format: '{value} KWH',
-                            style: {
-                                color: Highcharts.getOptions().colors[0]
-                            }
+                        series: [{
+                            name: "Temperature",
+                            data: newValue.alltemps,
+                            lineWidth: 2,
+                            yAxis: 1,
+                            color: Highcharts.getOptions().colors[2]
+                            
                         },
-                    },
-                    { // Secondary yAxis
-                        title: {
-                            text: 'Temperature',
-                            style: {
-                                color: Highcharts.getOptions().colors[2]
-                            }
-                        },
-                        labels: {
-                            format: '{value} F',
-                            style: {
-                                color: Highcharts.getOptions().colors[2]
-                            }
-                        },
-                        opposite: true,
-                    }],
-                    title: {
-                        text: 'Load Profile 30 Days'
-                    },
-                    series: [{
-                        name: "Temperature",
-                        data: newValue.alltemps,
-                        lineWidth: 1,
-                        yAxis: 1,
-                        color: Highcharts.getOptions().colors[2]
-                        
-                    },
-                    {
-                        name: "KWH",
-                        color: Highcharts.getOptions().colors[1],
-                        allowPointSelect: true,
-                        data: newValue.allkwh,// newValue.alltemps
-                        point: {
-                            events: {
-                                click: function(e) {
-                                    var aDate = new Date(this.x+86400000);
-                                    var aColor;
-                                    var day = aDate.getUTCDay();
-                                    if(day == 0 || day == 1) {
-                                        aColor = '#99FF33'; 
-                                    } else if(day == 2) { 
-                                        aColor = '#FF9900'; 
-                                    } 
-                                    else {
-                                        aColor = '#CC0000';
+                        {
+                            name: "KWH",
+                            color: Highcharts.getOptions().colors[1],
+                            allowPointSelect: true,
+                            data: newValue.allkwh,// newValue.alltemps
+                            point: {
+                                events: {
+                                    click: function(e) {
+                                        var aDate = new Date(this.x+86400000);
+                                        var aColor;
+                                        var day = aDate.getUTCDay();
+                                        if(day == 0 || day == 1) {
+                                            aColor = '#99FF33'; 
+                                        } else if(day == 2) { 
+                                            aColor = '#FF9900'; 
+                                        } 
+                                        else {
+                                            aColor = '#CC0000';
+                                        }
+                                        var myDateString = aDate.getFullYear()+ '-' +
+                                            ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
+                                            ('0' + aDate.getDate()).slice(-2);
+         
+                                        var newday = _.where(days, {date: myDateString});
+                     
+                                        Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
+                                        Highcharts.charts[2].series[0].setData(newday[0].values, false);
+                                        Highcharts.charts[2].series[0].color = aColor;
+                                        Highcharts.charts[2].series[1].setData(newday[0].temps, false);
+                                        Highcharts.charts[2].redraw();
+                
+                                        var kwday = _.where(daysKw, {date: myDateString});
+                                        
+                                        Highcharts.charts[3].setTitle({text: "Demand Profile " + newday[0].date},{},false);
+                                        Highcharts.charts[3].series[0].setData(kwday[0].values, false);
+                                        Highcharts.charts[3].series[0].color = aColor;
+                                        Highcharts.charts[3].series[1].setData(newday[0].temps,false);
+                                        Highcharts.charts[3].redraw();
                                     }
-                                    var myDateString = aDate.getFullYear()+ '-' +
-                                        ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
-                                        ('0' + aDate.getDate()).slice(-2);
-     
-                                    var newday = _.where(days, {date: myDateString});
-                                    Highcharts.charts[2].series[0].remove();
-                                    Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
-                                    Highcharts.charts[2].addSeries({data: newday[0].values, color: aColor}, true);
-
-                                    newday = _.where(daysKw, {date: myDateString});
-                                    Highcharts.charts[3].series[0].remove();
-                                    Highcharts.charts[3].setTitle({text: "Demand Profile " + newday[0].date},{},false);
-                                    Highcharts.charts[3].addSeries({data: newday[0].values,color: aColor}, true);
                                 }
                             }
-                        }
 
-                    }]      
-                });
+                        }]      
+                    });
+                }
             }, true);
         }
     }
 }).directive('kwhheatmap', function($rootScope) {
+    //HEATMAP Upper Right
     return {
         restrict: 'E',
         replace: true,
@@ -239,7 +284,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                         data: newValue,
                         point: {
                             events: {
-                                click: function(e) {
+                                click:  function (e){
                                     var aDate = new Date(this.y+86400000);
                                     var aColor;
                                     var day = aDate.getUTCDay();
@@ -254,14 +299,23 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                     var myDateString = aDate.getFullYear()+ '-' +
                                         ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
                                         ('0' + aDate.getDate()).slice(-2);
-                                    var newday = _.where(daysKw, {date: myDateString});
-                                    Highcharts.charts[3].series[0].remove();
-                                    Highcharts.charts[3].setTitle({text: "Demand Profile " + newday[0].date},{},false);
-                                    Highcharts.charts[3].addSeries({data: newday[0].values,color: aColor}, true);
-                                    newday = _.where(days, {date: myDateString});
-                                    Highcharts.charts[2].series[0].remove();
+
+                                    var newday = _.where(days, {date: myDateString});
+ 
                                     Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
-                                    Highcharts.charts[2].addSeries({data: newday[0].values,color: aColor}, true);
+                                    Highcharts.charts[2].series[0].setData(newday[0].values, false);
+                                    Highcharts.charts[2].series[0].color = aColor;
+                                    if(newday[0].temps !== undefined){
+                                        Highcharts.charts[2].series[1].setData(newday[0].temps, false);
+                                    }
+                                    Highcharts.charts[2].redraw();
+                                    
+                                    var newdaykw = _.where(daysKw, {date: myDateString});
+                                    Highcharts.charts[3].series[0].setData(newdaykw[0].values, false);
+                                    Highcharts.charts[3].setTitle({text: "Demand Profile " + newday[0].date},{},false);
+                                    Highcharts.charts[3].series[1].setData(newday[0].temps);
+                                    Highcharts.charts[3].series[0].color = aColor;
+                                    Highcharts.charts[3].redraw();   
                                 }
                             }
                         }
@@ -272,6 +326,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
         }
     }
 }).directive('kwbarchart', function($rootScope) {
+    //lower right - KW Bar Chart
     return {
         restrict: 'E',
         replace: true,
@@ -283,7 +338,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
             
             var chart = new Highcharts.Chart({
                 chart: {
-                    type: 'column',
+                    
                     renderTo: 'container_kwhbarchart',
 
                 },
@@ -292,16 +347,49 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     categories: $rootScope.intervalTimes,
                     tickInterval: 10
                 },
-                yAxis: {
-                    showEmpty: false
+                yAxis: [{ //First Y Axis
+                    title: {
+                        text: 'KW',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
+                    labels: {
+                        format: '{value} KW',
+                        style: {
+                            color: Highcharts.getOptions().colors[0]
+                        }
+                    },
                 },
+                { // Secondary yAxis
+                    title: {
+                        text: 'Temperature',
+                        style: {
+                            color: Highcharts.getOptions().colors[2]
+                        }
+                    },
+                    labels: {
+                        format: '{value} F',
+                        style: {
+                            color: Highcharts.getOptions().colors[2]
+                        }
+                    },
+                    opposite: true,
+                }],
                 title: {
                     text: 'Demand Profile'
                 },
                 series: [{
-                  
+                    name: 'KW',
+                    type:'spline',
+                    yAxis: 0
+                },
+                {
+                    type:'spline',
+                    name: 'Temperature',
+                    allowPointSelect: true,
+                    yAxis: 1,
                 }]
-               
             }); 
             scope.$watch('bardata', function(newValue) {
                 if (newValue !== undefined) {
@@ -320,6 +408,10 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     chart.series[0].color = aColor;
 
                     chart.xAxis[0].setCategories($rootScope.intervalTimes,false);
+                    if(newValue.temps !== undefined){
+                        chart.series[1].setData(newValue.temps,false);
+                    }
+                    
                     chart.redraw();
                 }
             }, true);
