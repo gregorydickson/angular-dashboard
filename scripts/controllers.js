@@ -1,7 +1,7 @@
 'use strict';
 App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncService) {
     
-        EnergyAsyncService().then(function (Energy) {
+        EnergyAsyncService.defaultView().then(function (Energy) {
 
             //scope for kwh 30 days, first chart
             $scope.kwh = Energy;
@@ -35,7 +35,7 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
         });
         
 });
-App.controller('treeCtrl', function($scope,ConfigService,filterFilter) {
+App.controller('treeCtrl', function($scope,ConfigService) {
     $scope.metersSelected = [];
     ConfigService.getConfig().then(function(config){
         var facilities = config.data.facilities;
@@ -52,7 +52,7 @@ App.controller('treeCtrl', function($scope,ConfigService,filterFilter) {
 
         });
         //create a selected attribute on all meters and set it true
-        // if they are in the selected meters list
+        // if they are in the selected meters list otherwise false
         _.forEach(facilities, function(facility){
             _.forEach(facility.meters, function(meter){
                 meter.selected = false;
@@ -66,12 +66,15 @@ App.controller('treeCtrl', function($scope,ConfigService,filterFilter) {
     });
     
     $scope.facilitiesSelected = [];
-    
+    $scope.refresh = function(){
+        //update things
+    }
     
     //watch for changes
     $scope.$watch('facilities', function (newvalue, oldvalue) {
       if(newvalue){
         console.log("watch function facilities");
+        //
       }
       
     }, true);

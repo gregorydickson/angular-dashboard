@@ -156,7 +156,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             name: "KWH",
                             color: Highcharts.getOptions().colors[1],
                             allowPointSelect: true,
-                            data: newValue.allkwh,// newValue.alltemps
+                            data: newValue.allkwh,
                             point: {
                                 events: {
                                     click: function(e) {
