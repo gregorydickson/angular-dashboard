@@ -104,6 +104,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
             });
             scope.$watch('kwhdata', function(newValue) {
                 if(newValue !== undefined){
+                    console.log("Chart 1 newValue in $watch");
                     chart = new Highcharts.Chart({
                         chart: {
                             type: 'spline',

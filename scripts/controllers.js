@@ -1,7 +1,42 @@
 'use strict';
-App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncService) {
-    
-        EnergyAsyncService.defaultView().then(function (Energy) {
+App.controller('loadProfileController', function($scope,$rootScope,MetersMessageBus, EnergyAsyncService) {
+
+    EnergyAsyncService.defaultView().then(function (Energy) {
+
+        //scope for kwh 30 days, first chart
+        $scope.kwh = Energy;
+        
+         //scope for heatmap, second chart
+        $rootScope.deciles = Energy.percentDeciles;
+        $rootScope.minKwValue = Energy.minKwValue;
+        $rootScope.maxKwValue = Energy.maxKwValue;
+        $rootScope.intervals = Energy.intervals;
+        $rootScope.intervalDates = Energy.intervalDates;
+        $rootScope.intervalTimes = Energy.intervalTimes;
+        $scope.kwhheatdata = Energy.kwhHeatData;
+
+        //scope for daily profile, third chart
+        var kwhDay = {};
+        kwhDay.values = Energy.days[0].values;
+        kwhDay.date = Energy.daysKw[0].date;
+        kwhDay.intervalTimes = Energy.intervalTimes;
+        kwhDay.temps = Energy.days[0].temps;
+        $scope.dailyProfileData = kwhDay;
+        //need the data in a window variable for the click event
+        days = Energy.days;
+        //fourth chart
+        var kwDay = {};
+        kwDay.values = Energy.daysKw[0].values;
+        kwDay.date = Energy.daysKw[0].date;
+        kwDay.temps = Energy.days[0].temps;
+        $scope.data2 = kwDay;
+        //data in a window variable for the click event
+        daysKw = Energy.daysKw;
+    });
+
+    $scope.$on('handleBroadcast', function() {
+        console.log('Message Received: ' + MetersMessageBus.message);
+        EnergyAsyncService.updateView(MetersMessageBus.message).then(function (Energy) {
 
             //scope for kwh 30 days, first chart
             $scope.kwh = Energy;
@@ -33,9 +68,11 @@ App.controller('loadProfileController', function($scope,$rootScope, EnergyAsyncS
             //data in a window variable for the click event
             daysKw = Energy.daysKw;
         });
+    }); 
+
         
 });
-App.controller('treeCtrl', function($scope,ConfigService) {
+App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
     $scope.metersSelected = [];
     ConfigService.getConfig().then(function(config){
         var facilities = config.data.facilities;
@@ -64,18 +101,31 @@ App.controller('treeCtrl', function($scope,ConfigService) {
         
         $scope.facilities = facilities;
     });
-    
-    $scope.facilitiesSelected = [];
-    $scope.refresh = function(){
-        //update things
-    }
+    $scope.selectFacility = function(){
+
+    };
+
+    $scope.refresh = function() {
+        var message = $scope.metersSelected;
+        MetersMessageBus.handleMessage(message);
+    };
     
     //watch for changes
     $scope.$watch('facilities', function (newvalue, oldvalue) {
-      if(newvalue){
-        console.log("watch function facilities");
-        //
-      }
+        if(newvalue){
+            console.log("watch function facilities");
+            //update list of meters
+            $scope.metersSelected = [];
+            _.forEach(newvalue, function(facility){
+                _.forEach(facility.meters , function(meter){
+                    if(meter.selected === true)
+                    {
+                        $scope.metersSelected.push(meter.id);
+                        console.log("selected METER " + meter.id);
+                    }
+                });
+            });
+        }
       
     }, true);
     

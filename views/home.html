@@ -6,15 +6,17 @@
                     <div ui-tree>
                     <h4>Meters</h4>
                       <ol ui-tree-nodes ng-model="facilities">
-                        <li ng-repeat="facility in facilities" ui-tree-node data-nodrag>
+                        <li ng-repeat="facility in facilities" ui-tree-node>
                           <div ui-tree-handle>
-                            {{facility.name}} <input type="checkbox" value="{{facility.id}}" ng-model="facility.selected" />
+                            <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+                            {{facility.name}} 
+                            <input type="checkbox" value="{{facility.id}}" ng-model="facility.selected" ng-click=""/>
                           </div>
                     
-                          <ol ui-tree-nodes ng-model="facility.meters">
-                            <li ng-repeat="meter in facility.meters" ui-tree-node data-nodrag>
+                          <ol ui-tree-nodes ng-model="facility.meters" ng-class="{hidden: collapsed}">
+                            <li ng-repeat="meter in facility.meters" ui-tree-node >
                               <div ui-tree-handle>
-                                {{meter.desc}} <input type="checkbox" value="{{meter.id}}" ng-model="meter.selected" />
+                                {{meter.desc}} <input type="checkbox" value="{{meter.id}}" ng-model="meter.selected" ng-checked="facility.selected" />
                               </div>
                             </li>
                           </ol>
@@ -35,10 +37,11 @@
                     
                     <br>
                     <br>
-                    <input type="text" class="view-input" >
+                    
                     <input type="submit" value="Update View" ng-click=""><br>
                     <input type="submit" value="Delete View" ng-click=""><br>
-                    <input type="submit" value="Create View" ng-click="">
+                    <input type="submit" value="Create View" ng-click=""><br>
+                    <input type="text" class="view-input" >
                 </form>
             </div>
         </div>

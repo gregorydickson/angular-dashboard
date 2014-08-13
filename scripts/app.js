@@ -2,7 +2,17 @@
 //need some references on the window for use in highcharts click events.
 var days;
 var daysKw;
-
+/**
+* This function takes a 30 day set of intervals and converts them
+* for display in the four Highcharts, a 30 day demand profile
+* a 30 day heatmap, and two one day
+*
+* @method makeEnergy
+* @param {Object} energy The object returned by angular from
+*  $http with the 30 days of intervals
+* @return {Object} Returns a Energy object with properties
+* for the data
+*/
 function makeEnergy(energy){
     var Energy = {};
     Energy.kwhMonth = [];
@@ -184,11 +194,34 @@ App.factory('EnergyAsyncService', function(IntervalsDataService) {
         return IntervalsDataService.getDefaultView()
             .then(makeEnergy);
     };
-    factory.updateview = function (meters) {
+    factory.updateView = function (meters) {
+        console.log("Energy Async Service Update View");
         return IntervalsDataService.refreshView(meters)
             .then(makeEnergy);
     }
     return factory;
+});
+/**
+* Used by the two controllers to communicate changes in the 
+* list of meters
+* 
+*/
+App.factory('MetersMessageBus', function($rootScope) {
+    var bus = {};
+    
+    bus.message = '';
+
+    bus.handleMessage = function(m) {
+        console.log("handling message: " + m);
+        this.message = m;
+        this.broadcastItem();
+    };
+
+    bus.broadcastItem = function() {
+        $rootScope.$broadcast('handleBroadcast');
+    };
+
+    return bus;
 });
 
 
