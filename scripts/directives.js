@@ -62,6 +62,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 }]
             });
             scope.$watch('linedata', function(newValue) {
+                console.log("CHART #3 WATCH FUNCTION");
                 if (newValue !== undefined) {
                     var aDate = new Date(newValue.date);
                     var aColor;
@@ -86,7 +87,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
             }, true);
         }
     }
-}).directive('kwharea', function() {
+}).directive('kwharea', function($rootScope) {
     // First Chart, upper left
     return {
         restrict: 'E',
@@ -103,6 +104,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 }
             });
             scope.$watch('kwhdata', function(newValue) {
+                console.log("CHART #1 WATCH FUNCTION");
                 if(newValue !== undefined){
                     console.log("Chart 1 newValue in $watch");
                     chart = new Highcharts.Chart({
@@ -220,6 +222,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     }
             });
             scope.$watch('kwhheatdata', function(newValue, oldValue) {
+                console.log("HEATMAP WATCH FUNCTION");
                 if($rootScope.intervalDates !== undefined){
                     chart = new Highcharts.Chart({
                     chart: {
@@ -393,6 +396,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 }]
             }); 
             scope.$watch('bardata', function(newValue) {
+                console.log("CHART #4 WATCH FUNCTION");
                 if (newValue !== undefined) {
                     var aDate = new Date(newValue.date);
                     var aColor;

@@ -34,9 +34,11 @@ App.controller('loadProfileController', function($scope,$rootScope,MetersMessage
         daysKw = Energy.daysKw;
     });
 
-    $scope.$on('handleBroadcast', function() {
+    $scope.$on('handleBroadcast', function(event) {
         console.log('Message Received: ' + MetersMessageBus.message);
-        EnergyAsyncService.updateView(MetersMessageBus.message).then(function (Energy) {
+        
+        EnergyAsyncService.updateView(MetersMessageBus.message,event).then(function (Energy) {
+
 
             //scope for kwh 30 days, first chart
             $scope.kwh = Energy;
@@ -49,6 +51,8 @@ App.controller('loadProfileController', function($scope,$rootScope,MetersMessage
             $rootScope.intervalDates = Energy.intervalDates;
             $rootScope.intervalTimes = Energy.intervalTimes;
             $scope.kwhheatdata = Energy.kwhHeatData;
+            $rootScope.refresh = true;
+            console.log("Refresh set on Root scope");
 
             //scope for daily profile, third chart
             var kwhDay = {};
@@ -67,7 +71,12 @@ App.controller('loadProfileController', function($scope,$rootScope,MetersMessage
             $scope.data2 = kwDay;
             //data in a window variable for the click event
             daysKw = Energy.daysKw;
+            _.defer(function(){
+
+                $rootScope.$digest()
+            });
         });
+        
     }); 
 
         
