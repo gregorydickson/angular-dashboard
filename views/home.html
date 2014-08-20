@@ -10,27 +10,26 @@
                           <div ui-tree-handle>
                             <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
                             {{facility.name}} 
-                            <input type="checkbox" value="{{facility.id}}" ng-model="facility.selected" ng-click=""/>
+                            <input type="checkbox" value="{{facility.id}}" ng-model="facility.selected" ng-click="" ng-change="facilityChange({{$index}})"/>
                           </div>
                     
                           <ol ui-tree-nodes ng-model="facility.meters" ng-class="{hidden: collapsed}">
                             <li ng-repeat="meter in facility.meters" ui-tree-node >
                               <div ui-tree-handle>
-                                {{meter.desc}} <input type="checkbox" value="{{meter.id}}" ng-model="meter.selected" ng-checked="facility.selected" />
+                                {{meter.desc}} <input type="checkbox" value="{{meter.id}}" ng-model="meter.selected"  />
                               </div>
                             </li>
                           </ol>
                         </li>
                       </ol>
-                      <input type="button" name="" value="Refresh" ng-click="refresh()">
+                      <button type="button" class="btn-sm btn-success" ng-click="refresh()">Refresh Charts</button>
+                      
                       <h4>Views</h4>
                       <ol ui-tree-nodes ng-model="views">
                         <li ng-repeat="view in views" ui-tree-node data-nodrag>
                           <div ui-tree-handle>
                             {{view.name}} <input type="checkbox" value="{{row.id}}" />
                           </div>
-                    
-                          
                         </li>
                       </ol>
                     </div>
@@ -38,10 +37,21 @@
                     <br>
                     <br>
                     
-                    <input type="submit" value="Update View" ng-click=""><br>
-                    <input type="submit" value="Delete View" ng-click=""><br>
-                    <input type="submit" value="Create View" ng-click=""><br>
+                    
+                    <button type="button" class="btn-sm btn-success" ng-click="updateView()">Update View</button>
+                    <br>
+                    <button type="button" class="btn-sm btn-success" ng-click="deleteView()">Delete View</button>
+                    <br>
+                    <button type="button" class="btn-sm btn-success" ng-click="createView()">Create View</button>
+                    <br>
+                    
                     <input type="text" class="view-input" >
+                    <span class="label label-info">View Name</span><br>
+                    <input type="checkbox" value="" ng-model="createDefault"  />
+                    <span class="label label-info">Make Default</span>
+                    <br>
+                    <br>
+                    <button type="button" class="btn-sm btn-success">Launch LP</button>
                 </form>
             </div>
         </div>

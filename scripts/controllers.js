@@ -51,8 +51,6 @@ App.controller('loadProfileController', function($scope,$rootScope,MetersMessage
             $rootScope.intervalDates = Energy.intervalDates;
             $rootScope.intervalTimes = Energy.intervalTimes;
             $scope.kwhheatdata = Energy.kwhHeatData;
-            $rootScope.refresh = true;
-            console.log("Refresh set on Root scope");
 
             //scope for daily profile, third chart
             var kwhDay = {};
@@ -82,7 +80,10 @@ App.controller('loadProfileController', function($scope,$rootScope,MetersMessage
         
 });
 App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
+
     $scope.metersSelected = [];
+    $scope.viewSelected = [];
+
     ConfigService.getConfig().then(function(config){
         var facilities = config.data.facilities;
         var lpPage = _.find(config.data.pages, {'name': 'LP'});
@@ -100,6 +101,7 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
         //create a selected attribute on all meters and set it true
         // if they are in the selected meters list otherwise false
         _.forEach(facilities, function(facility){
+            facility.selected = false;
             _.forEach(facility.meters, function(meter){
                 meter.selected = false;
                 if(_.contains($scope.metersSelected,meter.id )){
@@ -110,10 +112,43 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
         
         $scope.facilities = facilities;
     });
-    $scope.selectFacility = function(){
+    $scope.facilityChange = function(index){
+        _.forEach($scope.facilities[index].meters, function(meter){
+            if($scope.facilities[index].selected === true){
+                meter.selected = true;
+            } else
+            {
+                meter.selected = false;
+            }
+        });
 
     };
+    $scope.updateView = function(){
+        //get the view selected
 
+        //send the list of meters to the config service
+        ConfigService.updateView().then(function(config){});
+        //update the charts with the new meters
+
+        
+    };
+    $scope.deleteView = function(){
+        //get the view selected
+
+        //send the list of meters to the config service
+
+        //update the charts with the new intervals
+        $scope.refresh
+    };
+    $scope.createDefault = false;
+    $scope.createView = function(){
+        //get the list of meters and view name
+
+        //send the list of meters and view name to the config service
+
+        //update the charts with the new intervals using refresh
+        $scope.refresh
+    };
     $scope.refresh = function() {
         var message = $scope.metersSelected;
         MetersMessageBus.handleMessage(message);
@@ -122,10 +157,10 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
     //watch for changes
     $scope.$watch('facilities', function (newvalue, oldvalue) {
         if(newvalue){
-            console.log("watch function facilities");
             //update list of meters
             $scope.metersSelected = [];
             _.forEach(newvalue, function(facility){
+
                 _.forEach(facility.meters , function(meter){
                     if(meter.selected === true)
                     {

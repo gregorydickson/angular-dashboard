@@ -128,15 +128,67 @@ App.factory('ConfigService', function ($http) {
     return $http({
         url: 'config.php',
         method: "POST",
-        data: JSON.stringify({function:"masterconfig", SID:SID,application:"LPDashboard"}),
+        data: JSON.stringify({function:"masterconfig",
+                            SID:SID,
+                            application:"LPDashboard"
+        }),
         headers: {'Content-Type': 'application/json'},
         cache: true
     });
   };
-  configServiceFactory.saveView = function (view) {
+  configServiceFactory.updateView = function (view, meters, isdefault) {
     $httpDefaultCache.remove('config.php');
+    return $http({
+        url: 'updateview.php',
+        method: "POST",
+        data: JSON.stringify({function:"updateview",
+                            SID:SID,
+                            page: "LP",
+                            name: view,
+                            meters: meters,
+                            default: isdefault,
+                            application:"LPDashboard"
+        }),
+        headers: {'Content-Type': 'application/json'},
+        cache: false
+    });
 
   };
+  configServiceFactory.deleteView = function (view) {
+    $httpDefaultCache.remove('config.php');
+    return $http({
+        url: 'deleteview.php',
+        method: "POST",
+        data: JSON.stringify({function:"deleteview",
+                            SID:SID,
+                            page: "LP",
+                            name: view,
+                            application:"LPDashboard"
+        }),
+        headers: {'Content-Type': 'application/json'},
+        cache: false
+    });
+
+  };
+  configServiceFactory.createView = function (view, meters, isdefault) {
+    $httpDefaultCache.remove('config.php');
+    return $http({
+        url: 'createview.php',
+        method: "POST",
+        data: JSON.stringify({function:"createview",
+                            SID:SID,
+                            page: "LP",
+                            name: view,
+                            meters: meters,
+                            default: isdefault,
+                            application:"LPDashboard"
+        }),
+        headers: {'Content-Type': 'application/json'},
+        cache: false
+    });
+
+  }
+
   return configServiceFactory;
 });
 
