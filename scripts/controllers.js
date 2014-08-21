@@ -91,7 +91,7 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
         //get the default view and find the meters that should be selected
         _.forEach($scope.views, function(view){
             console.log("view name " + view.name);
-            if(view.default === true) {
+            if(view.default == "true") {
                 _.forEach(view.meters,function(meter){
                     $scope.metersSelected.push(meter);
                 });

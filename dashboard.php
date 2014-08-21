@@ -29,11 +29,14 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/directives.js"></script>
         <script src="scripts/controllers.js"></script>
-        <script>
+
         <?php 
-            echo "var SID = '100001';";
+            if(array_key_exists('sid', $_GET))
+              echo '<script>var SID = \'' . $_GET['sid'] . '\';</script>';
+            if(array_key_exists('sid', $_POST))
+              echo '<script>var SID = \'' . $_POST['sid'] . '\';</script>';
         ?> 
-        </script>
+
 
     </head>
   

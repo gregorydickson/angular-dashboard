@@ -37,6 +37,7 @@ function makeEnergy(energy){
     //so that we can create a set of 15 minute intervals from midnight
     var time = 21600000; 
     var kwhValue = 0;
+    //go through the days and create the data structure for heatmap
     for (var i = 0; i <= 95; i++) {
         Energy.intervals.push(i);
         var timeOfDay = new Date(time);
@@ -58,13 +59,15 @@ function makeEnergy(energy){
     var date;
     var totalMilliseconds;
     var millisecondsToAdd;
+    var date = new Date();
+    var timezoneOffset = date.getTimezoneOffset();
     $.each(Energy.days, function(index, day){
         Energy.intervalDates.push(Date.parse(day.date));
         var valuesInKw = [];
         $.each(day.values, function (index,the96){
             // multiply the values by kwfactor
             valuesInKw.push(the96 * Energy.kwFactor)
-            dateInMilliseconds = Date.parse(day.date);
+            dateInMilliseconds = Date.parse(day.date) - (timezoneOffset * 60000);
             //calculates the datetime in milliseconds
             //have to add the number based on the 96 time intervals per day
             millisecondsToAdd = 900000 * (1+index);
@@ -126,7 +129,7 @@ App.factory('ConfigService', function ($http) {
   configServiceFactory.getConfig = function () {
     console.log("SID is " + SID);
     return $http({
-        url: 'lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
+        url: '/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"masterconfig",
                             SID:SID,
@@ -139,7 +142,7 @@ App.factory('ConfigService', function ($http) {
   configServiceFactory.updateView = function (view, meters, isdefault) {
     $httpDefaultCache.remove('config.php');
     return $http({
-        url: 'profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
+        url: '/profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"updateview",
                             SID:SID,
@@ -157,7 +160,7 @@ App.factory('ConfigService', function ($http) {
   configServiceFactory.deleteView = function (view) {
     $httpDefaultCache.remove('profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
     return $http({
-        url: 'profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
+        url: '/profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"deleteview",
                             SID:SID,
@@ -173,7 +176,7 @@ App.factory('ConfigService', function ($http) {
   configServiceFactory.createView = function (view, meters, isdefault) {
     $httpDefaultCache.remove('profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
     return $http({
-        url: 'profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
+        url: '/profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"createview",
                             SID:SID,
@@ -200,17 +203,23 @@ App.factory('IntervalsDataService', function ($http,ConfigService) {
             console.log("facilites returned in interval data service" + config.data);
             
             var LPPage = _.find(config.data.pages,{'name':'LP'} );
-            var defaultView = _.find(LPPage.views, {'default':true});
-            var today = new Date();
+            var defaultView = _.find(LPPage.views, {'default':'true'});
+            var dateObj = new Date();
+            dateObj.setDate(dateObj.getDate() - 1);
+            var month = dateObj.getUTCMonth() + 1;
+            var day = dateObj.getUTCDate();
+            var year = dateObj.getUTCFullYear();
+            var newdate = year + "/" + month + "/" + day;
+            console.log("Default View Request Date " + newdate);
             return $http({
-                url:'lpdashboard/servlet/aei.lpdashboard.servlet.DataServlet',
+                url:'/lpdashboard/servlet/aei.lpdashboard.servlet.DataServlet',
                 method: "POST",
                 data: JSON.stringify({
                     function:"intervals",
                     meters: defaultView.meters,
-                    enddate: today.toLocaleDateString("en-US"),
+                    enddate: newdate,
                     timeperiod:"last30days",
-                    binsize:"15",
+                    binsize:15,
                     SID:SID,
                     application:"LPDashboard"
                 }),
@@ -220,16 +229,23 @@ App.factory('IntervalsDataService', function ($http,ConfigService) {
     };
 
     intervalsDataServiceFactory.refreshView = function (meters) {
-        var today = new Date();
+        
+        var dateObj = new Date();
+        dateObj.setDate(dateObj.getDate() - 1);
+        var month = dateObj.getUTCMonth() + 1;
+        var day = dateObj.getUTCDate();
+        var year = dateObj.getUTCFullYear();
+        var newdate = year + "/" + month + "/" + day;
+        console.log("Refresh Request Date " + newdate);
         return $http({
-            url:'lpdashboard/servlet/aei.lpdashboard.servlet.DataServlet',
+            url:'/lpdashboard/servlet/aei.lpdashboard.servlet.DataServlet',
             method: "POST",
             data: JSON.stringify({
                 function:"intervals",
                 meters: meters,
-                enddate: today.toLocaleDateString("en-US"),
+                enddate: newdate,
                 timeperiod:"last30days",
-                binsize:"15",
+                binsize:15,
                 SID:SID,
                 application:"LPDashboard"
             }),

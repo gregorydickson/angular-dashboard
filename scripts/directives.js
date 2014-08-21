@@ -163,7 +163,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             point: {
                                 events: {
                                     click: function(e) {
-                                        var aDate = new Date(this.x+86400000);
+                                        var aDate = new Date(this.x);
                                         var aColor;
                                         var day = aDate.getUTCDay();
                                         if(day == 0 || day == 1) {
@@ -174,8 +174,8 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                         else {
                                             aColor = '#CC0000';
                                         }
-                                        var myDateString = aDate.getFullYear()+ '-' +
-                                            ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
+                                        var myDateString = aDate.getFullYear()+ '/' +
+                                            ('0' + (aDate.getMonth()+1)).slice(-2) + '/' +
                                             ('0' + aDate.getDate()).slice(-2);
          
                                         var newday = _.where(days, {date: myDateString});
@@ -262,11 +262,11 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             */
                             
                             [$rootScope.deciles[0], '#0021BF'],
-                            [$rootScope.deciles[3], '#00DCDB'],
-                            [$rootScope.deciles[4], '#BFD9F2'],
-                            [$rootScope.deciles[5], '#ABD2F7'],
-                            [$rootScope.deciles[8], '#F9B4DF'],
-                            [$rootScope.deciles[9], '#E50035'],
+                            [$rootScope.deciles[2], '#00DCDB'],
+                            [$rootScope.deciles[5], '#BFD9F2'],
+                            [$rootScope.deciles[6], '#ABD2F7'],
+                            [$rootScope.deciles[7], '#F9B4DF'],
+                            [$rootScope.deciles[8], '#E50035'],
                             
                             
                         ],
@@ -289,7 +289,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                         point: {
                             events: {
                                 click:  function (e){
-                                    var aDate = new Date(this.y+86400000);
+                                    var aDate = new Date(this.y);
                                     var aColor;
                                     var day = aDate.getUTCDay();
                                     if(day == 0 || day == 1) {
@@ -300,8 +300,8 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                     else {
                                         aColor = '#CC0000';
                                     }
-                                    var myDateString = aDate.getFullYear()+ '-' +
-                                        ('0' + (aDate.getMonth()+1)).slice(-2) + '-' +
+                                    var myDateString = aDate.getFullYear()+ '/' +
+                                        ('0' + (aDate.getMonth()+1)).slice(-2) + '/' +
                                         ('0' + aDate.getDate()).slice(-2);
 
                                     var newday = _.where(days, {date: myDateString});
