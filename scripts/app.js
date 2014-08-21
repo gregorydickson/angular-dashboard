@@ -126,7 +126,7 @@ App.factory('ConfigService', function ($http) {
   configServiceFactory.getConfig = function () {
     console.log("SID is " + SID);
     return $http({
-        url: 'config.php',
+        url: 'lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"masterconfig",
                             SID:SID,
@@ -139,7 +139,7 @@ App.factory('ConfigService', function ($http) {
   configServiceFactory.updateView = function (view, meters, isdefault) {
     $httpDefaultCache.remove('config.php');
     return $http({
-        url: 'updateview.php',
+        url: 'profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"updateview",
                             SID:SID,
@@ -155,9 +155,9 @@ App.factory('ConfigService', function ($http) {
 
   };
   configServiceFactory.deleteView = function (view) {
-    $httpDefaultCache.remove('config.php');
+    $httpDefaultCache.remove('profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
     return $http({
-        url: 'deleteview.php',
+        url: 'profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"deleteview",
                             SID:SID,
@@ -171,9 +171,9 @@ App.factory('ConfigService', function ($http) {
 
   };
   configServiceFactory.createView = function (view, meters, isdefault) {
-    $httpDefaultCache.remove('config.php');
+    $httpDefaultCache.remove('profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
     return $http({
-        url: 'createview.php',
+        url: 'profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"createview",
                             SID:SID,
@@ -203,7 +203,7 @@ App.factory('IntervalsDataService', function ($http,ConfigService) {
             var defaultView = _.find(LPPage.views, {'default':true});
             var today = new Date();
             return $http({
-                url:'data.php',
+                url:'lpdashboard/servlet/aei.lpdashboard.servlet.DataServlet',
                 method: "POST",
                 data: JSON.stringify({
                     function:"intervals",
@@ -222,7 +222,7 @@ App.factory('IntervalsDataService', function ($http,ConfigService) {
     intervalsDataServiceFactory.refreshView = function (meters) {
         var today = new Date();
         return $http({
-            url:'data.php',
+            url:'lpdashboard/servlet/aei.lpdashboard.servlet.DataServlet',
             method: "POST",
             data: JSON.stringify({
                 function:"intervals",
