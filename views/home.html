@@ -1,3 +1,4 @@
+<span us-spinner spinner-key="spinner-1"></span>
 <div class='container-fluid'>
     <div class='row'>
         <div class='col-lg-2'>
@@ -28,19 +29,18 @@
                       <ol ui-tree-nodes ng-model="views">
                         <li ng-repeat="view in views" ui-tree-node data-nodrag>
                           <div ui-tree-handle>
-                            {{view.name}} <input type="checkbox" value="{{row.id}}" />
+                            {{view.name}} <input type="checkbox" value="{{row.id}}" ng-model="view.selected" ng-change="viewChange('{{view.name}}')"/>
                           </div>
                         </li>
                       </ol>
                     </div>
                     
                     <br>
-                    <br>
-                    
                     
                     <button type="button" class="btn-sm btn-success" ng-click="updateView()">Update View</button>
                     <br>
                     <button type="button" class="btn-sm btn-success" ng-click="deleteView()">Delete View</button>
+                    <br>
                     <br>
                     <button type="button" class="btn-sm btn-success" ng-click="createView()">Create View</button>
                     <br>

@@ -110,7 +110,7 @@ function makeEnergy(energy){
     return Energy;
 };
 // Declare app level module which depends on filters, and services
-var App = angular.module('myApp', ['myApp.directives', 'ngRoute','highcharts-ng','ui.tree']).
+var App = angular.module('myApp', ['myApp.directives','angularSpinner', 'ngRoute','highcharts-ng','ui.tree']).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
         $routeProvider.
@@ -124,7 +124,7 @@ config(['$routeProvider', '$locationProvider',
     }
 ]);
 
-App.factory('ConfigService', function ($http) {
+App.factory('ConfigService', function ($http, $cacheFactory) {
   var configServiceFactory = {};
   configServiceFactory.getConfig = function () {
     console.log("SID is " + SID);
@@ -140,16 +140,18 @@ App.factory('ConfigService', function ($http) {
     });
   };
   configServiceFactory.updateView = function (view, meters, isdefault) {
-    $httpDefaultCache.remove('config.php');
+    var $httpDefaultCache = $cacheFactory.get('$http');
+    $httpDefaultCache.remove('/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
     return $http({
-        url: '/profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
+        url: '/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
-        data: JSON.stringify({function:"updateview",
+        data: JSON.stringify({function:"saveview",
                             SID:SID,
                             page: "LP",
                             name: view,
                             meters: meters,
                             default: isdefault,
+                            timeperiod: "last30days",
                             application:"LPDashboard"
         }),
         headers: {'Content-Type': 'application/json'},
@@ -158,9 +160,10 @@ App.factory('ConfigService', function ($http) {
 
   };
   configServiceFactory.deleteView = function (view) {
-    $httpDefaultCache.remove('profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
+    var $httpDefaultCache = $cacheFactory.get('$http');
+    $httpDefaultCache.remove('/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
     return $http({
-        url: '/profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
+        url: '/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"deleteview",
                             SID:SID,
@@ -174,9 +177,10 @@ App.factory('ConfigService', function ($http) {
 
   };
   configServiceFactory.createView = function (view, meters, isdefault) {
-    $httpDefaultCache.remove('profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
+    var $httpDefaultCache = $cacheFactory.get('$http');
+    $httpDefaultCache.remove('/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet');
     return $http({
-        url: '/profiles.automatedenergy.com/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
+        url: '/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
         method: "POST",
         data: JSON.stringify({function:"createview",
                             SID:SID,

@@ -1,5 +1,5 @@
 'use strict';
-App.controller('loadProfileController', function($scope,$rootScope,MetersMessageBus, EnergyAsyncService) {
+App.controller('loadProfileController', function($scope,$rootScope,usSpinnerService,MetersMessageBus, EnergyAsyncService) {
 
     EnergyAsyncService.defaultView().then(function (Energy) {
 
@@ -73,16 +73,18 @@ App.controller('loadProfileController', function($scope,$rootScope,MetersMessage
 
                 $rootScope.$digest()
             });
+            usSpinnerService.stop('spinner-1');
         });
         
     }); 
 
         
 });
-App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
+App.controller('treeCtrl', function($scope,usSpinnerService,ConfigService,MetersMessageBus) {
 
     $scope.metersSelected = [];
-    $scope.viewSelected = [];
+    $scope.viewSelected = "";
+
 
     ConfigService.getConfig().then(function(config){
         var facilities = config.data.facilities;
@@ -91,7 +93,13 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
         //get the default view and find the meters that should be selected
         _.forEach($scope.views, function(view){
             console.log("view name " + view.name);
+            view.selected = false;
             if(view.default == "true") {
+                view.selected = true;
+                $scope.defaultViewName = view.name;
+                $scope.viewSelected = view.name;
+                console.log("View Selected is TRUE");
+
                 _.forEach(view.meters,function(meter){
                     $scope.metersSelected.push(meter);
                 });
@@ -123,11 +131,55 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
         });
 
     };
+    $scope.viewChange = function(viewName){
+        console.log("view Change");
+        var caseViewSelected = false;
+        _.forEach($scope.views, function(view){
+            if(view.name === viewName && view.selected == true)
+            {
+                caseViewSelected = true;
+            } 
+        });
+        var selectedView;
+        if(caseViewSelected)
+        {
+            console.log("Case View Selected");
+            _.forEach($scope.views, function(view){
+                if(view.name !== viewName) {
+                    view.selected = false;
+                } 
+                if(view.name == viewName) {
+                    selectedView = view;
+                    $scope.viewSelected = viewName;
+                    console.log("selected View is " + selectedView.name);
+                }
+                
+            });
+            //redo the meters in the new view
+            $scope.metersSelected = selectedView.meters;
+            _.forEach($scope.facilities, function(facility) {
+                _.forEach(facility.meters, function(meter) {
+                    meter.selected = false;
+                    if(_.contains(selectedView.meters,meter.id )){
+                        meter.selected = true;
+                    }
+                });
+            });
+            console.log("CAlling scope refresh");
+            $scope.refresh();
+        }
+    };
     $scope.updateView = function(){
         //get the view selected
-
+        console.log("updating view");
+        var isDefault = "false";
+        if($scope.viewSelected == $scope.defaultViewName) {
+            isDefault = "true";
+        }
         //send the list of meters to the config service
-        ConfigService.updateView().then(function(config){});
+        ConfigService.updateView($scope.viewSelected, $scope.metersSelected, isDefault).then(function(config){
+            $scope.refresh();
+        });
         //update the charts with the new meters
 
         
@@ -138,7 +190,7 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
         //send the list of meters to the config service
 
         //update the charts with the new intervals
-        $scope.refresh
+        $scope.refresh();
     };
     $scope.createDefault = false;
     $scope.createView = function(){
@@ -147,11 +199,13 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
         //send the list of meters and view name to the config service
 
         //update the charts with the new intervals using refresh
-        $scope.refresh
+       $scope.refresh();
     };
     $scope.refresh = function() {
+        usSpinnerService.spin('spinner-1');
         var message = $scope.metersSelected;
         MetersMessageBus.handleMessage(message);
+
     };
     
     //watch for changes
@@ -169,6 +223,15 @@ App.controller('treeCtrl', function($scope,ConfigService,MetersMessageBus) {
                     }
                 });
             });
+        }
+      
+    }, true);
+    //watch for changes
+    $scope.$watch('views', function (newvalue, oldvalue) {
+        if(newvalue){
+            //
+       
+            console.log("Updated Views");
         }
       
     }, true);

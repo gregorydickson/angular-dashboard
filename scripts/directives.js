@@ -163,7 +163,12 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             point: {
                                 events: {
                                     click: function(e) {
-                                        var aDate = new Date(this.x);
+                                        var date = new Date();
+                                        var timezoneOffset = date.getTimezoneOffset();
+                                        console.log("Timezone Offset is " + timezoneOffset);
+                                        console.log("this.x is " + this.x);
+                                        var aDate = new Date(this.x+(timezoneOffset * 60000));
+                                        
                                         var aColor;
                                         var day = aDate.getUTCDay();
                                         if(day == 0 || day == 1) {
@@ -177,7 +182,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                         var myDateString = aDate.getFullYear()+ '/' +
                                             ('0' + (aDate.getMonth()+1)).slice(-2) + '/' +
                                             ('0' + aDate.getDate()).slice(-2);
-         
+                                        console.log("Date is: " + myDateString);
                                         var newday = _.where(days, {date: myDateString});
                      
                                         Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
@@ -289,6 +294,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                         point: {
                             events: {
                                 click:  function (e){
+                                    
                                     var aDate = new Date(this.y);
                                     var aColor;
                                     var day = aDate.getUTCDay();
@@ -303,6 +309,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                     var myDateString = aDate.getFullYear()+ '/' +
                                         ('0' + (aDate.getMonth()+1)).slice(-2) + '/' +
                                         ('0' + aDate.getDate()).slice(-2);
+
 
                                     var newday = _.where(days, {date: myDateString});
  

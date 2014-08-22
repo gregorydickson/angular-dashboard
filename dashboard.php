@@ -16,9 +16,13 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
+        <script src="scripts/lib/spin.js/spin.js"></script>
+
         <script src="scripts/lib/angular/angular.min.js"></script>
+        <script src="scripts/lib/angular-spinner/angular-spinner.js"></script>
         <script src="scripts/lib/angular-route/angular-route.min.js"></script>
         <script src="scripts/lib/angular-ui-tree/dist/angular-ui-tree.js"></script>
+
         <script src="scripts/lib/highcharts-ng/dist/highcharts-ng.js"></script>
 
         <script src="http://code.highcharts.com/highcharts.js"></script>
