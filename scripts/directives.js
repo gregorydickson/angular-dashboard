@@ -15,6 +15,9 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     type: 'line',
                     renderTo: 'container_dailyprofile',
                 },
+                credits: {
+                    enabled: false
+                },
                 yAxis:[{ //First Y Axis
                     title: {
                         text: 'KWH',
@@ -28,13 +31,11 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             color: Highcharts.getOptions().colors[0]
                         }
                     },
+                    min: 0
                 },
                 { // Secondary yAxis
                     title: {
-                        text: 'Temperature',
-                        style: {
-                            color: Highcharts.getOptions().colors[2]
-                        }
+                        text: 'Temperature'
                     },
                     labels: {
                         format: '{value} F',
@@ -42,6 +43,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             color: Highcharts.getOptions().colors[2]
                         }
                     },
+                    min: 0,
                     opposite: true,
                 }],
                 xAxis: {
@@ -53,12 +55,19 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 series: [{
                     name: 'KWH',
                     allowPointSelect: true,
+                    marker: {
+                        enabled: false
+                    },
+                    color: Highcharts.getOptions().colors[0]
                 },
                 {
                     name: 'Temperature',
                     allowPointSelect: true,
                     yAxis: 1,
-
+                    marker: {
+                        enabled: false
+                    },
+                    color: Highcharts.getOptions().colors[2]
                 }]
             });
             scope.$watch('linedata', function(newValue) {
@@ -77,11 +86,16 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     }
                     
                     chart.series[0].setData(newValue.values,false);
-                    chart.series[0].color = aColor;
+                    //chart.series[0].color = aColor;
                     chart.xAxis[0].setCategories($rootScope.intervalTimes,false);
                     if(newValue.temps !== undefined){
+                        chart.series[1].color = Highcharts.getOptions().colors[2];
                         chart.series[1].setData(newValue.temps,false);
+                    } else if (chart.series[1] != undefined)
+                    {
+                        chart.series[1].setData();
                     }
+
                     chart.redraw();
                 }
             }, true);
@@ -101,6 +115,9 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 chart: {
                     type: 'spline',
                     renderTo: 'container_area',
+                }, 
+                credits: {
+                    enabled: false
                 }
             });
             scope.$watch('kwhdata', function(newValue) {
@@ -112,6 +129,9 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             type: 'spline',
                             renderTo: 'container_area',
                         },
+                        credits: {
+                            enabled: false
+                        },
                         xAxis: {
                             type: 'datetime',
                         },
@@ -119,15 +139,16 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             title: {
                                 text: 'KWH',
                                 style: {
-                                    color: Highcharts.getOptions().colors[0]
+                                    color: Highcharts.getOptions().colors[1]
                                 }
                             },
                             labels: {
                                 format: '{value} KWH',
                                 style: {
-                                    color: Highcharts.getOptions().colors[0]
+                                    color: Highcharts.getOptions().colors[1]
                                 }
                             },
+                            min: 0,
                         },
                         { // Secondary yAxis
                             title: {
@@ -142,6 +163,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                     color: Highcharts.getOptions().colors[2]
                                 }
                             },
+                            min: 0,
                             opposite: true,
                         }],
                         title: {
@@ -150,7 +172,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                         series: [{
                             name: "Temperature",
                             data: newValue.alltemps,
-                            lineWidth: 2,
+                            lineWidth: 1.25,
                             yAxis: 1,
                             color: Highcharts.getOptions().colors[2]
                             
@@ -159,6 +181,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             name: "KWH",
                             color: Highcharts.getOptions().colors[1],
                             allowPointSelect: true,
+                            lineWidth: .75,
                             data: newValue.allkwh,
                             point: {
                                 events: {
@@ -187,7 +210,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                      
                                         Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
                                         Highcharts.charts[2].series[0].setData(newday[0].values, false);
-                                        Highcharts.charts[2].series[0].color = aColor;
+                                        //Highcharts.charts[2].series[0].color = aColor;
                                         Highcharts.charts[2].series[1].setData(newday[0].temps, false);
                                         Highcharts.charts[2].redraw();
                 
@@ -195,7 +218,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                         
                                         Highcharts.charts[3].setTitle({text: "Demand Profile " + newday[0].date},{},false);
                                         Highcharts.charts[3].series[0].setData(kwday[0].values, false);
-                                        Highcharts.charts[3].series[0].color = aColor;
+                                        //Highcharts.charts[3].series[0].color = aColor;
                                         Highcharts.charts[3].series[1].setData(newday[0].temps,false);
                                         Highcharts.charts[3].redraw();
                                     }
@@ -222,9 +245,12 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 chart: {
                     renderTo: 'container_heatmap',
                 },
+                credits: {
+                    enabled: false
+                },
                 title: {
                         text: 'Demand'
-                    }
+                }
             });
             scope.$watch('kwhheatdata', function(newValue, oldValue) {
                 console.log("HEATMAP WATCH FUNCTION");
@@ -233,6 +259,9 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     chart: {
                         type: 'heatmap',
                         renderTo: 'container_heatmap',
+                    },
+                    credits: {
+                        enabled: false
                     },
                     yAxis: {
                         type: 'datetime',
@@ -315,7 +344,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
  
                                     Highcharts.charts[2].setTitle({text:"Load Profile "+newday[0].date},{},false);
                                     Highcharts.charts[2].series[0].setData(newday[0].values, false);
-                                    Highcharts.charts[2].series[0].color = aColor;
+                                    //Highcharts.charts[2].series[0].color = aColor;
                                     if(newday[0].temps !== undefined){
                                         Highcharts.charts[2].series[1].setData(newday[0].temps, false);
                                     }
@@ -325,7 +354,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                                     Highcharts.charts[3].series[0].setData(newdaykw[0].values, false);
                                     Highcharts.charts[3].setTitle({text: "Demand Profile " + newday[0].date},{},false);
                                     Highcharts.charts[3].series[1].setData(newday[0].temps);
-                                    Highcharts.charts[3].series[0].color = aColor;
+                                    //Highcharts.charts[3].series[0].color = aColor;
                                     Highcharts.charts[3].redraw();   
                                 }
                             }
@@ -337,7 +366,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
         }
     }
 }).directive('kwbarchart', function($rootScope) {
-    //lower right - KW Bar Chart
+    //Fourth Chart - lower right - KW Bar Chart
     return {
         restrict: 'E',
         replace: true,
@@ -349,9 +378,12 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
             
             var chart = new Highcharts.Chart({
                 chart: {
-                    
+                    type: 'column',
                     renderTo: 'container_kwhbarchart',
 
+                },
+                credits: {
+                    enabled: false
                 },
                 xAxis: {
                     type: 'categories',
@@ -379,6 +411,7 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                             color: Highcharts.getOptions().colors[2]
                         }
                     },
+                    min: 0,
                     labels: {
                         format: '{value} F',
                         style: {
@@ -392,14 +425,23 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                 },
                 series: [{
                     name: 'KW',
-                    type:'spline',
-                    yAxis: 0
+                    type:'column',
+                    allowPointSelect:false,
+                    yAxis: 0,
+                    color: Highcharts.getOptions().colors[0],
+                    marker: {
+                        enabled: false
+                    }
                 },
                 {
                     type:'spline',
                     name: 'Temperature',
-                    allowPointSelect: true,
+                    allowPointSelect: false,
                     yAxis: 1,
+                    color: Highcharts.getOptions().colors[2],
+                    marker: {
+                        enabled: false
+                    }
                 }]
             }); 
             scope.$watch('bardata', function(newValue) {
@@ -422,6 +464,10 @@ angular.module('myApp.directives', []).directive('dailyprofile', function($rootS
                     chart.xAxis[0].setCategories($rootScope.intervalTimes,false);
                     if(newValue.temps !== undefined){
                         chart.series[1].setData(newValue.temps,false);
+                        chart.series[1].color = Highcharts.getOptions().colors[2];
+                    }else if (chart.series[1] != undefined)
+                    {
+                        chart.series[1].setData();
                     }
                     
                     chart.redraw();

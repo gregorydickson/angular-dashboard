@@ -110,7 +110,7 @@ function makeEnergy(energy){
     return Energy;
 };
 // Declare app level module which depends on filters, and services
-var App = angular.module('myApp', ['myApp.directives','angularSpinner', 'ngRoute','highcharts-ng','ui.tree']).
+var App = angular.module('myApp', ['myApp.directives','ui.bootstrap','angularSpinner', 'ngRoute','highcharts-ng','ui.tree']).
 config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
         $routeProvider.

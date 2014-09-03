@@ -1,8 +1,24 @@
+
 body {
 	background-color: #EEF1F2;
+    font-size: 12px;
+    line-height: .9;
+}
+ol {
+    font-size: 10px;
+    margin-bottom: 0px;
+}
+.meters-scroller { 
+    min-height: 200px;
+    max-height: 300px;
+    overflow-y: scroll; 
+}
+.views-scroller {
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: scroll;
 }
 .container {
-    
     padding-left: 30px;
     padding-right: 30px;
 }

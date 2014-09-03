@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <h3 class="modal-title">Save As</h3>
+</div>
+<div class="modal-body">
+   <h3>Save View As:</h3>
+   <input type="text" ng-model="newview.viewname"  />
+	<h3>Make View Default</h3>
+   <input type="checkbox" ng-model="newview.viewdefault" ng-true-value="true" ng-false-value="false" >
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

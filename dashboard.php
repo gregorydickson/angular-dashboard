@@ -9,7 +9,6 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="scripts/lib/angular-ui-tree/dist/angular-ui-tree.min.css" />
         
-        
         <link rel="stylesheet" type="text/css" href="styles/style.css" />
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -21,7 +20,9 @@
         <script src="scripts/lib/angular/angular.min.js"></script>
         <script src="scripts/lib/angular-spinner/angular-spinner.js"></script>
         <script src="scripts/lib/angular-route/angular-route.min.js"></script>
+
         <script src="scripts/lib/angular-ui-tree/dist/angular-ui-tree.js"></script>
+        <script src="scripts/lib/bootstrap-custom/ui-bootstrap-custom-tpls-0.10.0.min.js"></script>
 
         <script src="scripts/lib/highcharts-ng/dist/highcharts-ng.js"></script>
 

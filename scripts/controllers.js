@@ -80,8 +80,24 @@ App.controller('loadProfileController', function($scope,$rootScope,usSpinnerServ
 
         
 });
-App.controller('treeCtrl', function($scope,usSpinnerService,ConfigService,MetersMessageBus) {
 
+var modalController = function($scope, $modalInstance) {
+
+  $scope.newview = { viewname: '',
+                    viewdefault: 'false' };
+
+  $scope.ok = function () {
+    $modalInstance.close($scope.newview);
+  };
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+
+};
+
+App.controller('treeCtrl', function($scope,$modal,usSpinnerService,ConfigService,MetersMessageBus) {
+    
     $scope.metersSelected = [];
     $scope.viewSelected = "";
 
@@ -110,6 +126,7 @@ App.controller('treeCtrl', function($scope,usSpinnerService,ConfigService,Meters
         // if they are in the selected meters list otherwise false
         _.forEach(facilities, function(facility){
             facility.selected = false;
+            facility.collapsed = true;
             _.forEach(facility.meters, function(meter){
                 meter.selected = false;
                 if(_.contains($scope.metersSelected,meter.id )){
@@ -156,6 +173,7 @@ App.controller('treeCtrl', function($scope,usSpinnerService,ConfigService,Meters
                 
             });
             //redo the meters in the new view
+
             $scope.metersSelected = selectedView.meters;
             _.forEach($scope.facilities, function(facility) {
                 _.forEach(facility.meters, function(meter) {
@@ -169,29 +187,170 @@ App.controller('treeCtrl', function($scope,usSpinnerService,ConfigService,Meters
             $scope.refresh();
         }
     };
+
+    $scope.saveAs = function(){
+        var modalInstance = $modal.open({
+            templateUrl: 'views/saveas.html',
+            controller: modalController,
+            size: 'lg'
+        });
+
+        modalInstance.result.then(function (newview) {
+            console.log("New View Name " + newview.viewname);
+            console.log("View IS DEFAULT " + newview.viewdefault);
+            ConfigService.updateView(newview.viewname, $scope.metersSelected, newview.viewdefault).then(function(config){
+                var facilities = config.data.facilities;
+                var lpPage = _.find(config.data.pages, {'name': 'LP'});
+                $scope.views = lpPage.views;
+                //get the default view and find the meters that should be selected
+                _.forEach($scope.views, function(view){
+                    console.log("view name " + view.name);
+                    view.selected = false;
+                    if(view.default == "true") {
+                        view.selected = true;
+                        $scope.defaultViewName = view.name;
+                        $scope.viewSelected = view.name;
+                        console.log("View Selected is TRUE");
+
+                        _.forEach(view.meters,function(meter){
+                            $scope.metersSelected.push(meter);
+                        });
+                    }
+
+                });
+                //create a selected attribute on all meters and set it true
+                // if they are in the selected meters list otherwise false
+                _.forEach(facilities, function(facility){
+                    facility.selected = false;
+                    _.forEach(facility.meters, function(meter){
+                        meter.selected = false;
+                        if(_.contains($scope.metersSelected,meter.id )){
+                            meter.selected = true;
+                        }
+                    });
+                });
+
+                $scope.facilities = facilities;
+
+                $scope.refresh();
+            });
+        });
+    };
+    
     $scope.updateView = function(){
-        //get the view selected
+        
+        console.log("updating view");
+        if($scope.viewSelected == '<Load Profile>'){
+            var modalInstance = $modal.open({
+              templateUrl: 'views/baseviewsaveas.html',
+              controller: modalController,
+              size: 'lg'
+            });
+
+            modalInstance.result.then(function (newview) {
+                console.log("New View Name " + newview.viewname);
+                console.log("View IS DEFAULT " + newview.viewdefault);
+                ConfigService.updateView(newview.viewname, $scope.metersSelected, newview.viewdefault).then(function(config){
+                    var facilities = config.data.facilities;
+                    var lpPage = _.find(config.data.pages, {'name': 'LP'});
+                    $scope.views = lpPage.views;
+                    //get the default view and find the meters that should be selected
+                    _.forEach($scope.views, function(view){
+                        console.log("view name " + view.name);
+                        view.selected = false;
+                        if(view.default == "true") {
+                            view.selected = true;
+                            $scope.defaultViewName = view.name;
+                            $scope.viewSelected = view.name;
+                            console.log("View Selected is TRUE");
+
+                            _.forEach(view.meters,function(meter){
+                                $scope.metersSelected.push(meter);
+                            });
+                        }
+
+                    });
+                    //create a selected attribute on all meters and set it true
+                    // if they are in the selected meters list otherwise false
+                    _.forEach(facilities, function(facility){
+                        facility.selected = false;
+                        _.forEach(facility.meters, function(meter){
+                            meter.selected = false;
+                            if(_.contains($scope.metersSelected,meter.id )){
+                                meter.selected = true;
+                            }
+                        });
+                    });
+        
+                    $scope.facilities = facilities;
+
+                    $scope.refresh();
+                });
+            });
+        } else {
+            var isDefault = "false";
+            if($scope.viewSelected == $scope.defaultViewName) {
+                isDefault = "true";
+            }
+            //send the list of meters to the config service
+            ConfigService.updateView($scope.viewSelected, $scope.metersSelected, isDefault).then(function(config){
+                $scope.refresh();
+            });
+        }
+        
+        
+    };
+    $scope.deleteView = function(){
+        
         console.log("updating view");
         var isDefault = "false";
         if($scope.viewSelected == $scope.defaultViewName) {
             isDefault = "true";
         }
         //send the list of meters to the config service
-        ConfigService.updateView($scope.viewSelected, $scope.metersSelected, isDefault).then(function(config){
-            $scope.refresh();
+        ConfigService.deleteView($scope.viewSelected, $scope.metersSelected, isDefault).then(function(config){
+            console.log("View Deleted")
         });
-        //update the charts with the new meters
 
-        
-    };
-    $scope.deleteView = function(){
-        //get the view selected
+        $scope.metersSelected = [];
+        $scope.viewSelected = "";
 
-        //send the list of meters to the config service
+        ConfigService.getConfig().then(function(config){
+            var facilities = config.data.facilities;
+            var lpPage = _.find(config.data.pages, {'name': 'LP'});
+            $scope.views = lpPage.views;
+            //get the default view and find the meters that should be selected
+            _.forEach($scope.views, function(view){
+                console.log("view name " + view.name);
+                view.selected = false;
+                if(view.default == "true") {
+                    view.selected = true;
+                    $scope.defaultViewName = view.name;
+                    $scope.viewSelected = view.name;
+                    console.log("View Selected is TRUE");
 
-        //update the charts with the new intervals
+                    _.forEach(view.meters,function(meter){
+                        $scope.metersSelected.push(meter);
+                    });
+                }
+            });
+            //create a selected attribute on all meters and set it true
+            // if they are in the selected meters list otherwise false
+            _.forEach(facilities, function(facility){
+                facility.selected = false;
+                _.forEach(facility.meters, function(meter){
+                    meter.selected = false;
+                    if(_.contains($scope.metersSelected,meter.id )){
+                        meter.selected = true;
+                    }
+                });
+            });
+            $scope.facilities = facilities;
+
+        });
         $scope.refresh();
     };
+
     $scope.createDefault = false;
     $scope.createView = function(){
         //get the list of meters and view name
