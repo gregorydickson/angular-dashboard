@@ -32,6 +32,7 @@ App.controller('loadProfileController', function($scope,$rootScope,usSpinnerServ
         $scope.data2 = kwDay;
         //data in a window variable for the click event
         daysKw = Energy.daysKw;
+        usSpinnerService.stop('spinner-1');
     });
 
     $scope.$on('handleBroadcast', function(event) {
@@ -103,6 +104,7 @@ App.controller('treeCtrl', function($scope,$modal,usSpinnerService,ConfigService
 
 
     ConfigService.getConfig().then(function(config){
+        usSpinnerService.spin('spinner-1');
         var facilities = config.data.facilities;
         var lpPage = _.find(config.data.pages, {'name': 'LP'});
         $scope.views = lpPage.views;
@@ -136,6 +138,7 @@ App.controller('treeCtrl', function($scope,$modal,usSpinnerService,ConfigService
         });
         
         $scope.facilities = facilities;
+        
     });
     $scope.facilityChange = function(index){
         _.forEach($scope.facilities[index].meters, function(meter){
@@ -240,7 +243,7 @@ App.controller('treeCtrl', function($scope,$modal,usSpinnerService,ConfigService
     $scope.updateView = function(){
         
         console.log("updating view");
-        if($scope.viewSelected == '<Load Profile>'){
+        if($scope.viewSelected == '<Base View>'){
             var modalInstance = $modal.open({
               templateUrl: 'views/baseviewsaveas.html',
               controller: modalController,

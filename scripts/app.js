@@ -1,7 +1,8 @@
 'use strict';
-//need some references on the window for use in highcharts click events.
+//need some references on the window for use in highcharts events.
 var days;
 var daysKw;
+var Energy;
 /**
 * This function takes a 30 day set of intervals and converts them
 * for display in the four Highcharts, a 30 day demand profile
@@ -14,7 +15,7 @@ var daysKw;
 * for the data
 */
 function makeEnergy(energy){
-    var Energy = {};
+    Energy = {};
     Energy.kwhMonth = [];
     Energy.kwhHeatData = [];
     Energy.days = energy.data.days;
@@ -124,9 +125,11 @@ config(['$routeProvider', '$locationProvider',
     }
 ]);
 
-App.factory('ConfigService', function ($http, $cacheFactory) {
+App.factory('ConfigService', function ($http, $cacheFactory, usSpinnerService) {
+  
   var configServiceFactory = {};
   configServiceFactory.getConfig = function () {
+    
     console.log("SID is " + SID);
     return $http({
         url: '/lpdashboard/servlet/aei.lpdashboard.servlet.ConfigServlet',
@@ -200,6 +203,7 @@ App.factory('ConfigService', function ($http, $cacheFactory) {
 });
 
 App.factory('IntervalsDataService', function ($http,ConfigService) {
+    
     var intervalsDataServiceFactory = {};
     intervalsDataServiceFactory.getDefaultView = function () {
     return ConfigService.getConfig()

@@ -26,10 +26,10 @@
 
         <script src="scripts/lib/highcharts-ng/dist/highcharts-ng.js"></script>
 
-        <script src="http://code.highcharts.com/highcharts.js"></script>
-        <script src="http://code.highcharts.com/modules/exporting.js"></script>
-        <script src="http://code.highcharts.com/highcharts-more.js"></script>
-        <script src="http://code.highcharts.com/modules/heatmap.js"></script>
+        <script src="http://code.highcharts.com/4.0.4/highcharts.js"></script>
+        <script src="http://code.highcharts.com/4.0.4/modules/exporting.js"></script>
+        <script src="http://code.highcharts.com/4.0.4/highcharts-more.js"></script>
+        <script src="http://code.highcharts.com/4.0.4/modules/heatmap.js"></script>
 
         <script src="scripts/app.js"></script>
         <script src="scripts/directives.js"></script>
